@@ -25,6 +25,8 @@ class Equipo extends HiveObject{
     required this.ano,
     required this.horometro,
     required this.precioNeto,
+    required this.estado,
+    required this.ubicacion
   });
 
   @HiveField(0)
@@ -55,10 +57,18 @@ class Equipo extends HiveObject{
   String ano;
 
   @HiveField(9)
-  int horometro;
+  double horometro;
+
 
   @HiveField(10)
+  String estado;
+
+  @HiveField(11)
+  String ubicacion;
+
+  @HiveField(12)
   int precioNeto;
+
 
   factory Equipo.fromJson(Map<String, dynamic> json) => Equipo(
     id: json["idEquipo"],
@@ -70,8 +80,11 @@ class Equipo extends HiveObject{
     mastil: json["mastil"] == null ?  "":json["mastil"] ,
     altura:  json["altura"] == null ? 0.0 : json["altura"].toDouble(),
     ano: json["ano"],
-    horometro: json["horometro"] == null ? 0 : json["horometro"],
+    horometro: json["horometro"] == null ? 0.0 : json["horometro"].toDouble(),
+    estado: json['estado'],
+    ubicacion: json['ubicacion'],
     precioNeto: json["precio_neto"],
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -85,6 +98,8 @@ class Equipo extends HiveObject{
     "altura": altura,
     "ano": ano,
     "horometro": horometro,
+     "estado":estado,
+    "ubicacion":ubicacion,
     "precio_neto": precioNeto,
   };
 }

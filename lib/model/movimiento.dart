@@ -49,6 +49,9 @@ class Movimiento extends HiveObject{
   @HiveField(10)
   String observaciones;
 
+  String? equipoId;
+  String nombreCliente = "";
+
   factory Movimiento.fromJson(Map<String, dynamic> json) => Movimiento(
     idMovimiento: json["idMovimiento"],
     transporte: json["transporte"],

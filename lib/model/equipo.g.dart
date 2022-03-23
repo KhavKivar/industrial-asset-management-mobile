@@ -26,15 +26,17 @@ class EquipoAdapter extends TypeAdapter<Equipo> {
       mastil: fields[6] as String,
       altura: fields[7] as double,
       ano: fields[8] as String,
-      horometro: fields[9] as int,
-      precioNeto: fields[10] as int,
+      horometro: fields[9] as double,
+      precioNeto: fields[12] as int,
+      estado: fields[10] as String,
+      ubicacion: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Equipo obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,6 +58,10 @@ class EquipoAdapter extends TypeAdapter<Equipo> {
       ..writeByte(9)
       ..write(obj.horometro)
       ..writeByte(10)
+      ..write(obj.estado)
+      ..writeByte(11)
+      ..write(obj.ubicacion)
+      ..writeByte(12)
       ..write(obj.precioNeto);
   }
 

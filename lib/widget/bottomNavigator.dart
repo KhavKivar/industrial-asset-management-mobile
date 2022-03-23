@@ -2,7 +2,7 @@ import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/state/commonVarState.dart';
 import 'package:app_licman/ui/ui_creacion_acta/acta_general_page.dart';
 import 'package:app_licman/ui/ui_creacion_acta/acta_page_view.dart';
-import 'package:app_licman/ui/all_actas_page.dart';
+import 'package:app_licman/ui/tabla_actas/all_actas_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +30,8 @@ class _BottomNavigatorState extends State<BottomNavigator> {
       if(index == 0 ){
         Provider.of<CommonState>(context, listen: false)
             .changeActaIndex(0);
-        Navigator.pop(context);
+
+        Navigator.maybePop(context);
       }else if(index == 1){
         Navigator.push(
             context,
@@ -49,26 +50,32 @@ class _BottomNavigatorState extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-        backgroundColor: dark,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: yellowBackground,
-        unselectedFontSize: 15,
-        selectedFontSize: 17,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.content_paste),
-            label: 'Actas/Movimientos',
-          ),
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      descendantsAreFocusable: false,
+      child: BottomNavigationBar(
+          backgroundColor: dark,
+          unselectedItemColor: Colors.white,
+          selectedItemColor: yellowBackground,
+          unselectedFontSize: 15,
+          selectedFontSize: 17,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
 
-        ]);
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.content_paste),
+              label: 'Actas/Movimientos',
+            ),
+
+          ]),
+    );
   }
 }

@@ -143,7 +143,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
     final width = MediaQuery.of(context).size.width;
     final isDone = buttonState == ButtonState.done;
     final isStreched = isAnimating || buttonState == ButtonState.init;
-    print("widget editar ${activar}");
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
@@ -154,7 +154,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                 padding: const EdgeInsets.only(top:0,bottom: 10),
                 child: Container(
                   width: double.infinity,
-                  height: 60,
+
                   decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(5)),
@@ -167,9 +167,11 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                           color: Colors.white,
                           size: 34,
                         ),
-                        Text(
-                          "Error: " + message,
-                          style: TextStyle(color: Colors.white, fontSize: 30),
+                        Expanded(
+                          child: Text(
+                            "Error: " + message,
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                          ),
                         ),
                       ],
                     ),
@@ -180,15 +182,19 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
               children: [
                 Expanded(
                   child: TextField(
+
                     controller: rutController,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]|k')),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]|k|K')),
+                      UpperCaseTextFormatter(),
                     ],
                     onChanged: (value) {
                       Provider.of<ActaState>(context, listen: false)
                           .setRut(value);
                       RUTValidator.formatFromTextController(rutController!);
                     },
+
+                    
                     style: TextStyle(color: dark, fontSize: 23),
                     keyboardType: TextInputType.name,
                     maxLength: 12,
@@ -502,6 +508,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
           buttonState = ButtonState.done;
         });
         await Future.delayed(Duration(seconds: 1));
+
         Provider.of<EquipoState>(context, listen: false).setActa(result);
         Provider.of<EquipoState>(context, listen: false)
             .setHorometro(acta.idEquipo!, acta.horometroActual!);
@@ -566,7 +573,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
         Navigator.pop(context);
       }
     }on SocketException{
-      print("enter");
+
       enviarActaOffline();
     }on HttpException catch(e){
 
@@ -625,6 +632,9 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
     //Inspeccion acta =Provider.of<ActaState>(context, listen: false).convertMapToObject("");
     final Uint8List? data = await _controller.toPngBytes();
 
+    String? mastil = Provider.of<ActaState>(context, listen: false)
+        .MapOfValue['mastilEquipo'];
+    /*
     if (rutController?.value.text == "" ||
         RUTValidator(numbers: 0, validationErrorText: '', dv: '')
                 .validator(rutController!.value.text) !=
@@ -634,15 +644,23 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
       });
       message = "Rut invalido";
       return true;
-    }
+    }*/
 
+    if(mastil == null){
+      setState(() {
+        showError = true;
+      });
+      message = "Mastil vacio";
+      return true;
+    }
+    /*
     if (nameController?.value.text == "") {
       setState(() {
         showError = true;
       });
       message = "Nombre vacio";
       return true;
-    }
+    }*/
 
     if (alturaLevante == "") {
       setState(() {
@@ -676,3 +694,12 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
 }
 
 
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toLowerCase(),
+      selection: newValue.selection,
+    );
+  }
+}

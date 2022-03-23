@@ -94,6 +94,7 @@ class Inspeccion extends HiveObject{
 this.cilindroDeGas,
     this.horometroActual,
 
+    this.mastilEquipo,
     this.ts,
 
   });
@@ -285,9 +286,14 @@ this.cilindroDeGas,
   @HiveField(77)
   String? enchufeInfo;
   @HiveField(78)
-  int? horometroActual;
+  double? horometroActual;
+
 
   @HiveField(79)
+  String? mastilEquipo;
+
+
+  @HiveField(86)
   DateTime? ts;
 
   factory Inspeccion.fromJson(Map<String, dynamic> json) => Inspeccion(
@@ -367,9 +373,11 @@ this.cilindroDeGas,
     cilindroDeGas :json["cilindroDeGas"],
     bateriaObservaciones: json["bateriaObservaciones"],
     serieCargardorText: json["serieCargardorText"],
- cargadorVoltajeInfo: json["cargadorVoltajeInfo"],
-  enchufeInfo: json["enchufeInfo"],
-    horometroActual: json["horometroActual"],
+    cargadorVoltajeInfo: json["cargadorVoltajeInfo"],
+    enchufeInfo: json["enchufeInfo"],
+    horometroActual: json["horometroActual"].toDouble(),
+
+    mastilEquipo: json["mastilEquipo"],
 
 
     ts: DateTime.parse(json["ts"]),
@@ -451,7 +459,12 @@ this.cilindroDeGas,
     "serieCargardorText": serieCargardorText == null ? null : serieCargardorText,
     "cargadorVoltajeInfo": cargadorVoltajeInfo == null ? null : cargadorVoltajeInfo,
     "enchufeInfo": enchufeInfo == null ? null : enchufeInfo,
-    "horometroActual": horometroActual,
+
+
+
+    "horometroActual":horometroActual.toString(),
+
+    "mastilEquipo":mastilEquipo,
     "firmaURL": firmaUrl,
     "rut": rut,
     "nombre": nombre,

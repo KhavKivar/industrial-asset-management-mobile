@@ -8,6 +8,16 @@ import 'package:provider/provider.dart';
 import '../equipo.dart';
 import 'package:app_licman/plugins/dart_rut_form.dart';
 
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
+}
+
 class AuxSelectItem {
   AuxSelectItem(
       {required this.text,
@@ -35,16 +45,18 @@ class AuxSelectItem {
 }
 
 String? convertBoolToString(List<bool>? listValue) {
-  if (listValue == null) {
+  if(listValue ==null){
     return null;
   }
-
   if (listValue[0]) {
     return "bueno";
   } else if (listValue[1]) {
     return "regular";
+  }else if(listValue[2]){
+    return "malo";
   }
-  return "malo";
+  return null;
+
 }
 
 class ActaState extends ChangeNotifier {
@@ -59,28 +71,45 @@ class ActaState extends ChangeNotifier {
     acta.nombre = MapOfValue['name'];
     acta.observacion = MapOfValue['obv'];
     acta.alturaLevante = MapOfValue['alturaLevante'];
-    acta.horometroActual = int.parse(MapOfValue['horometroActual']);
+    acta.horometroActual = double.parse(MapOfValue['horometroActual']);
+
+    print("value ${MapOfValue['mastilEquipo']}");
+
+    acta.mastilEquipo = MapOfValue['mastilEquipo'] == 'Simple'
+        ? "SIMPLE"
+        : MapOfValue['mastilEquipo'] == 'Doble'
+            ? "DOBLE"
+            : "TRIPLE";
+
     acta.firmaUrl = signUrl;
 
     //1 camp
+
     acta.alarmaRetroceso = convertBoolToString(
         MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']);
+
+    print("alarma retroceso ${ MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']}");
+
+    acta.extintor =
+        convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Extintor']);
+    acta.espejos =
+        convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Espejos']);
+
+    acta.focosFaenerosDelanteros = convertBoolToString(
+        MapOfValue['ACTA']['SELECT_CAMP'][0]['Focos faeneros delanteros']);
+
+    acta.focosFaenerosTraseros = convertBoolToString(
+        MapOfValue['ACTA']['SELECT_CAMP'][0]['Focos faeneros traseros']);
+    acta.llaveContacto = convertBoolToString(
+        MapOfValue['ACTA']['SELECT_CAMP'][0]['LLave de contacto']);
+
     acta.asientoOperador = convertBoolToString(
         MapOfValue['ACTA']['SELECT_CAMP'][0]['Asiento operdor']);
     acta.baliza =
         convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Baliza']);
     acta.bocina =
         convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Bocina']);
-    acta.extintor =
-        convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Extintor']);
-    acta.espejos =
-        convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Espejos']);
-    acta.focosFaenerosDelanteros = convertBoolToString(
-        MapOfValue['ACTA']['SELECT_CAMP'][0]['Focos faeneros delanteros']);
-    acta.focosFaenerosTraseros = convertBoolToString(
-        MapOfValue['ACTA']['SELECT_CAMP'][0]['Focos faeneros traseros']);
-    acta.llaveContacto = convertBoolToString(
-        MapOfValue['ACTA']['SELECT_CAMP'][0]['LLave de contacto']);
+
     acta.intermitentesDelanteros = convertBoolToString(
         MapOfValue['ACTA']['SELECT_CAMP'][0]['Intermitentes delanteros']);
     acta.intermitentesTraseros = convertBoolToString(
@@ -221,7 +250,7 @@ class ActaState extends ChangeNotifier {
           : "24";
       var enchufeText = MapOfValue['ACTA']['OPTION_SELECT']["Enchufes"]
               .select
-              .split("V")[0] +
+              .split("A")[0] +
           "-" +
           MapOfValue['ACTA']['OPTION_SELECT']["Enchufes"].select[
               MapOfValue['ACTA']['OPTION_SELECT']["Enchufes"].select.length -
@@ -231,19 +260,44 @@ class ActaState extends ChangeNotifier {
 
     //Cantidad Camp
 
-    acta.cantidadRueda = int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Ruedas']);
+    acta.cantidadRueda = MapOfValue['ACTA']['TEXT_CAMP']['Ruedas'].length > 0
+        ? int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Ruedas'])
+        : 0;
+
     acta.cantidadIntermitentesDelanteros =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Intermitentes delanteros']);
-    acta.cantidadIntermitentesTraseros =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Intermitentes traseros']);
+        MapOfValue['ACTA']['TEXT_CAMP']['Intermitentes delanteros'].length == 0
+            ? 0
+            : int.parse(
+                MapOfValue['ACTA']['TEXT_CAMP']['Intermitentes delanteros']);
+
+    acta.cantidadIntermitentesTraseros = MapOfValue['ACTA']['TEXT_CAMP']
+                    ['Intermitentes traseros']
+                .length ==
+            0
+        ? 0
+        : int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Intermitentes traseros']);
+
     acta.cantidadLlaveContacto =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['LLave de contacto']);
+        MapOfValue['ACTA']['TEXT_CAMP']['LLave de contacto'].length == 0
+            ? 0
+            : int.parse(MapOfValue['ACTA']['TEXT_CAMP']['LLave de contacto']);
+
     acta.cantidadFocosFaenerosDelanteros =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Focos faeneros delanteros']);
-    acta.cantidadFocosFaenerosTraseros =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Focos faeneros traseros']);
+        MapOfValue['ACTA']['TEXT_CAMP']['Focos faeneros delanteros'].length == 0
+            ? 0
+            : int.parse(
+                MapOfValue['ACTA']['TEXT_CAMP']['Focos faeneros delanteros']);
+
+    acta.cantidadFocosFaenerosTraseros = MapOfValue['ACTA']['TEXT_CAMP']
+                    ['Focos faeneros traseros']
+                .length ==
+            0
+        ? 0
+        : int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Focos faeneros traseros']);
     acta.cantidadEspejos =
-        int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Espejos']);
+        MapOfValue['ACTA']['TEXT_CAMP']['Espejos'].length == 0
+            ? 0
+            : int.parse(MapOfValue['ACTA']['TEXT_CAMP']['Espejos']);
 
     return acta;
   }
@@ -257,6 +311,7 @@ class ActaState extends ChangeNotifier {
       "equipo": null,
       "alturaLevante": "",
       "horometroActual": "",
+      "mastilEquipo": null
     };
   }
 
@@ -269,6 +324,7 @@ class ActaState extends ChangeNotifier {
     MapOfValue['alturaLevante'] = "";
     MapOfValue['horometroActual'] = "";
     MapOfValue['tipo'] = true;
+    MapOfValue['mastilEquipo'] = null;
     initMap(true);
     notifyListeners();
   }
@@ -281,8 +337,14 @@ class ActaState extends ChangeNotifier {
     MapOfValue['equipo'] = Provider.of<EquipoState>(context, listen: false)
         .equipos
         .firstWhere((element) => element.id == acta.idEquipo);
+
+
     MapOfValue['alturaLevante'] = acta.alturaLevante.toString();
     MapOfValue['firmaUrl'] = acta.firmaUrl.toString();
+
+    MapOfValue['mastilEquipo'] = acta.mastilEquipo?.toCapitalized();
+
+
     MapOfValue['horometroActual'] = acta.horometroActual.toString();
     MapOfValue['tipo'] = acta.tipo == "acta_equipo" ? true : false;
     if (acta.tipo == "acta_equipo") {
@@ -291,19 +353,20 @@ class ActaState extends ChangeNotifier {
           "Arnes de cilindro de gas": AuxSelectItem(
               text: "Cilindro de gas",
               tipo: "select",
-              select: acta.cilindroDeGas == 1 ? "SI": "NO",
+              select: acta.cilindroDeGas == 1 ? "SI" : "NO",
               options: ["SI", "NO"]),
           'Carro y su respaldo de carga': AuxSelectItem(
-              text: "Respaldo de carga",
+              text: "Respaldo",
               tipo: "select",
-              select: acta.carga == 1 ? "SI": "NO",
-              options: ["SI", "NO"])
+              select: acta.carga == 1 ? "SI" : "NO",
+              options: ["SI", "NO"]),
         },
         "TEXT_CAMP": {
           'Espejos': acta.cantidadEspejos.toString(),
           'Focos faeneros delanteros':
               acta.cantidadFocosFaenerosDelanteros.toString(),
-          'Focos faeneros traseros': acta.cantidadFocosFaenerosTraseros.toString(),
+          'Focos faeneros traseros':
+              acta.cantidadFocosFaenerosTraseros.toString(),
           'LLave de contacto': acta.cantidadLlaveContacto.toString(),
           'Intermitentes delanteros':
               acta.cantidadIntermitentesDelanteros.toString(),
@@ -314,182 +377,219 @@ class ActaState extends ChangeNotifier {
         "SELECT_CAMP": [
           {
             '': [false, false, false],
-            'Alarma retroceso': convertStringToBool(acta.alarmaRetroceso!),
-            'Asiento operdor':  convertStringToBool(acta.asientoOperador!),
-            'Baliza': convertStringToBool(acta.baliza!),
-            'Bocina':  convertStringToBool(acta.bocina!),
-            'Extintor':  convertStringToBool(acta.extintor!),
-            'Espejos':  convertStringToBool(acta.espejos!),
-            'Focos faeneros delanteros': convertStringToBool(acta.focosFaenerosDelanteros!),
-            'Focos faeneros traseros': convertStringToBool(acta.focosFaenerosTraseros!),
-            'LLave de contacto':  convertStringToBool(acta.llaveContacto!),
-            'Intermitentes delanteros':  convertStringToBool(acta.intermitentesDelanteros!),
-            'Intermitentes traseros': convertStringToBool(acta.intermitentesTraseros!),
-            'Palanca freno mano':  convertStringToBool(acta.palancaFrenoMano!),
-            'Pera de volante': convertStringToBool(acta.peraVolante!),
-            'Arnes de cilindro de gas': convertStringToBool(acta.arnesCilindroGas!),
-            'Tablero instrumentos':  convertStringToBool(acta.tableroIntrumentos!),
+            'Alarma retroceso': convertStringToBool(acta.alarmaRetroceso),
+            'Asiento operdor': convertStringToBool(acta.asientoOperador),
+            'Baliza': convertStringToBool(acta.baliza),
+            'Bocina': convertStringToBool(acta.bocina),
+            'Extintor': convertStringToBool(acta.extintor),
+            'Espejos': convertStringToBool(acta.espejos),
+            'Focos faeneros delanteros':
+                convertStringToBool(acta.focosFaenerosDelanteros),
+            'Focos faeneros traseros':
+                convertStringToBool(acta.focosFaenerosTraseros),
+            'LLave de contacto': convertStringToBool(acta.llaveContacto),
+            'Intermitentes delanteros':
+                convertStringToBool(acta.intermitentesDelanteros),
+            'Intermitentes traseros':
+                convertStringToBool(acta.intermitentesTraseros),
+            'Palanca freno mano': convertStringToBool(acta.palancaFrenoMano),
+            'Pera de volante': convertStringToBool(acta.peraVolante),
+            'Arnes de cilindro de gas':
+                convertStringToBool(acta.arnesCilindroGas),
+            'Tablero instrumentos':
+                convertStringToBool(acta.tableroIntrumentos),
           },
           {
             '': [false, false, false],
-            'Cilindro desplazador':  convertStringToBool(acta.cilindroDesplazador!),
-            'Cilindro direccion':  convertStringToBool(acta.cilindroDireccion!),
-            'Cilindro levante central':  convertStringToBool(acta.cilindroLevanteCentral!),
-            'Cilindro inclinacion':  convertStringToBool(acta.cilindroInclinacion!),
-            'Cilindro levante laterales':  convertStringToBool(acta.cilindroLevanteLateral!),
-            'Flexibles hidraulicas': convertStringToBool(acta.flexibleHidraulico!),
-            'Fuga por conectores y mangueras':  convertStringToBool(acta.fugaConectores!),
+            'Cilindro desplazador':
+                convertStringToBool(acta.cilindroDesplazador),
+            'Cilindro direccion': convertStringToBool(acta.cilindroDireccion),
+            'Cilindro levante central':
+                convertStringToBool(acta.cilindroLevanteCentral),
+            'Cilindro inclinacion':
+                convertStringToBool(acta.cilindroInclinacion),
+            'Cilindro levante laterales':
+                convertStringToBool(acta.cilindroLevanteLateral),
+            'Flexibles hidraulicas':
+                convertStringToBool(acta.flexibleHidraulico),
+            'Fuga por conectores y mangueras':
+                convertStringToBool(acta.fugaConectores),
           },
           {
             '': [false, false, false],
-            'Alternador':  convertStringToBool(acta.alternador!),
-            'Bateria':  convertStringToBool(acta.bateria!),
-            'Chapa de contacto': convertStringToBool(acta.chapaContacto!),
-            'Sistema electrico':  convertStringToBool(acta.sistemaElectrico!),
-            'Horometro':  convertStringToBool(acta.horometro!),
-            'Motor de partida':  convertStringToBool(acta.motorPartida!),
-            'Palanca comandos':  convertStringToBool(acta.palancaComando!),
-            'Switch de luces': convertStringToBool(acta.switchLuces!),
-            'Switch de marchas':  convertStringToBool(acta.switchMarcha!),
+            'Alternador': convertStringToBool(acta.alternador),
+            'Bateria': convertStringToBool(acta.bateria),
+            'Chapa de contacto': convertStringToBool(acta.chapaContacto),
+            'Sistema electrico': convertStringToBool(acta.sistemaElectrico),
+            'Horometro': convertStringToBool(acta.horometro),
+            'Motor de partida': convertStringToBool(acta.motorPartida),
+            'Palanca comandos': convertStringToBool(acta.palancaComando),
+            'Switch de luces': convertStringToBool(acta.switchLuces),
+            'Switch de marchas': convertStringToBool(acta.switchMarcha),
           },
           {
             '': [false, false, false],
-            'Cadenas':  convertStringToBool(acta.cadena!),
-            'Carro y su respaldo de carga':  convertStringToBool(acta.carro!),
-            'Horquillas y seguros':  convertStringToBool(acta.horquilla!),
-            'Jaula de proteccion':  convertStringToBool(acta.jaula!),
-            'LLantas':  convertStringToBool(acta.llantas!),
-            'Mastil':  convertStringToBool(acta.mastil!),
-            'Pintura':  convertStringToBool(acta.pintura!),
-            'Ruedas':  convertStringToBool(acta.rueda!),
+            'Cadenas': convertStringToBool(acta.cadena),
+            'Carro y su respaldo de carga': convertStringToBool(acta.carro),
+            'Horquillas y seguros': convertStringToBool(acta.horquilla),
+            'Jaula de proteccion': convertStringToBool(acta.jaula),
+            'LLantas': convertStringToBool(acta.llantas),
+            'Mastil': convertStringToBool(acta.mastil),
+            'Pintura': convertStringToBool(acta.pintura),
+            'Ruedas': convertStringToBool(acta.rueda),
           },
           {
             '': [false, false, false],
-            'Desplazador lateral':  convertStringToBool(acta.desplazadorLateral!),
-            'Direccion': convertStringToBool(acta.direccion!),
-            'Freno mano':  convertStringToBool(acta.frenoMano!),
-            'Freno pie': convertStringToBool(acta.frenoPie!),
-            'Inclinacion': convertStringToBool(acta.inclinacion!),
-            'Levante':  convertStringToBool(acta.levante!),
-            'Motor': convertStringToBool(acta.motor!),
-            'Nivel aceite hidraulico':  convertStringToBool(acta.nivelAceiteHidraulico!),
-            'Nivel aceite motor':  convertStringToBool(acta.nivelAceiteMotor!),
-            'Nivel aceite transmision':  convertStringToBool(acta.nivelAceiteTransmision!),
-            'Nivel liquido de freno': convertStringToBool(acta.nivelLiquinoFreno!),
-            'Tapa combustible':  convertStringToBool(acta.tapaCombustible!),
-            'Tapa radiador':  convertStringToBool(acta.tapaRadiador!),
-            'Transmision':  convertStringToBool(acta.transmision!),
+            'Desplazador lateral':
+                convertStringToBool(acta.desplazadorLateral),
+            'Direccion': convertStringToBool(acta.direccion),
+            'Freno mano': convertStringToBool(acta.frenoMano),
+            'Freno pie': convertStringToBool(acta.frenoPie),
+            'Inclinacion': convertStringToBool(acta.inclinacion),
+            'Levante': convertStringToBool(acta.levante),
+            'Motor': convertStringToBool(acta.motor),
+            'Nivel aceite hidraulico':
+                convertStringToBool(acta.nivelAceiteHidraulico),
+            'Nivel aceite motor': convertStringToBool(acta.nivelAceiteMotor),
+            'Nivel aceite transmision':
+                convertStringToBool(acta.nivelAceiteTransmision),
+            'Nivel liquido de freno':
+                convertStringToBool(acta.nivelLiquinoFreno),
+            'Tapa combustible': convertStringToBool(acta.tapaCombustible),
+            'Tapa radiador': convertStringToBool(acta.tapaRadiador),
+            'Transmision': convertStringToBool(acta.transmision),
           }
         ]
       };
     } else {
       MapOfValue['ACTA'] = {
-
         "OPTION_SELECT": {
           'Carro y su respaldo de carga': AuxSelectItem(
-              text: "Respaldo de carga",
+              text: "Respaldo",
               select: acta.carga == 1 ? "SI" : "NO",
               tipo: "select",
               options: ["SI", "NO"]),
           'Bateria': AuxSelectItem(
-              text: "Observaciones", select: acta.bateriaObservaciones!, tipo: "text", options: []),
+              text: "Observaciones",
+              select: acta.bateriaObservaciones!,
+              tipo: "text",
+              options: []),
           'Serie cargador': AuxSelectItem(
-              text: "Serie", select: acta.serieCargardorText!, tipo: "text", options: []),
+              text: "Serie",
+              select: acta.serieCargardorText!,
+              tipo: "text",
+              options: []),
           'Cargador voltaje y amperaje': AuxSelectItem(
               text: "Voltaje",
-              select: acta.cargadorVoltajeInfo!+'V',
+              select: acta.cargadorVoltajeInfo! + 'V',
               tipo: "select",
               options: ["48V", "24V"]),
           'Enchufes': AuxSelectItem(
               text: "Tipo enchufe",
-              select:  acta.enchufeInfo!.split("-")[0] +
-                  "V " +
+              select: acta.enchufeInfo!.split("-")[0] +
+                  "A " +
                   "POLO " +
                   acta.enchufeInfo!.split("-")[1],
-              tipo:  "select",
+              tipo: "select",
               options: [
-                "16V POLO 4",
-                "16V POLO 5",
-                "32V POLO 4",
-                "32V POLO 5"
+                "16A POLO 4",
+                "16A POLO 5",
+                "32A POLO 4",
+                "32A POLO 5"
               ]),
         },
         "TEXT_CAMP": {
           'Espejos': acta.cantidadEspejos.toString(),
           'Focos faeneros delanteros':
-          acta.cantidadFocosFaenerosDelanteros.toString(),
-          'Focos faeneros traseros': acta.cantidadFocosFaenerosTraseros.toString(),
+              acta.cantidadFocosFaenerosDelanteros.toString(),
+          'Focos faeneros traseros':
+              acta.cantidadFocosFaenerosTraseros.toString(),
           'LLave de contacto': acta.cantidadLlaveContacto.toString(),
           'Intermitentes delanteros':
-          acta.cantidadIntermitentesDelanteros.toString(),
+              acta.cantidadIntermitentesDelanteros.toString(),
           'Intermitentes traseros':
-          acta.cantidadIntermitentesTraseros.toString(),
+              acta.cantidadIntermitentesTraseros.toString(),
           'Ruedas': acta.cantidadRueda.toString(),
         },
         "SELECT_CAMP": [
           {
             '': [false, false, false],
-            'Alarma retroceso': convertStringToBool(acta.alarmaRetroceso!),
-            'Asiento operdor': convertStringToBool(acta.asientoOperador!),
-            'Baliza': convertStringToBool(acta.baliza!),
-            'Bocina':convertStringToBool(acta.bocina!),
-            'Extintor': convertStringToBool(acta.extintor!),
-            'Espejos':convertStringToBool(acta.espejos!),
-            'Focos faeneros delanteros': convertStringToBool(acta.focosFaenerosDelanteros!),
-            'Focos faeneros traseros': convertStringToBool(acta.focosFaenerosTraseros!),
-            'LLave de contacto': convertStringToBool(acta.llaveContacto!),
-            'Intermitentes delanteros':convertStringToBool(acta.intermitentesDelanteros!),
-            'Intermitentes traseros':convertStringToBool(acta.intermitentesTraseros!),
-            'Palanca freno mano': convertStringToBool(acta.palancaFrenoMano!),
-            'Pera de volante': convertStringToBool(acta.peraVolante!),
-            'Tablero instrumentos': convertStringToBool(acta.tableroIntrumentos!),
+            'Alarma retroceso': convertStringToBool(acta.alarmaRetroceso),
+            'Asiento operdor': convertStringToBool(acta.asientoOperador),
+            'Baliza': convertStringToBool(acta.baliza),
+            'Bocina': convertStringToBool(acta.bocina),
+            'Extintor': convertStringToBool(acta.extintor),
+            'Espejos': convertStringToBool(acta.espejos),
+            'Focos faeneros delanteros':
+                convertStringToBool(acta.focosFaenerosDelanteros),
+            'Focos faeneros traseros':
+                convertStringToBool(acta.focosFaenerosTraseros),
+            'LLave de contacto': convertStringToBool(acta.llaveContacto),
+            'Intermitentes delanteros':
+                convertStringToBool(acta.intermitentesDelanteros),
+            'Intermitentes traseros':
+                convertStringToBool(acta.intermitentesTraseros),
+            'Palanca freno mano': convertStringToBool(acta.palancaFrenoMano),
+            'Pera de volante': convertStringToBool(acta.peraVolante),
+            'Tablero instrumentos':
+                convertStringToBool(acta.tableroIntrumentos),
           },
           {
             '': [false, false, false],
-            'Cilindro desplazador':convertStringToBool(acta.cilindroDesplazador!),
-            'Cilindro direccion cadena': convertStringToBool(acta.cilindroDireccion!),
-            'Cilindro levante central': convertStringToBool(acta.cilindroLevanteCentral!),
-            'Cilindro inclinacion': convertStringToBool(acta.cilindroInclinacion!),
-            'Cilindro levante laterales':convertStringToBool(acta.cilindroLevanteLateral!),
-            'Flexibles hidraulicas': convertStringToBool(acta.flexibleHidraulico!),
-            'Fuga por conectores y mangueras':convertStringToBool(acta.fugaConectores!),
+            'Cilindro desplazador':
+                convertStringToBool(acta.cilindroDesplazador),
+            'Cilindro direccion cadena':
+                convertStringToBool(acta.cilindroDireccion),
+            'Cilindro levante central':
+                convertStringToBool(acta.cilindroLevanteCentral),
+            'Cilindro inclinacion':
+                convertStringToBool(acta.cilindroInclinacion),
+            'Cilindro levante laterales':
+                convertStringToBool(acta.cilindroLevanteLateral),
+            'Flexibles hidraulicas':
+                convertStringToBool(acta.flexibleHidraulico),
+            'Fuga por conectores y mangueras':
+                convertStringToBool(acta.fugaConectores),
           },
           {
             '': [false, false, false],
-            'Bateria':convertStringToBool(acta.bateria!),
-            'Chapa de contacto': convertStringToBool(acta.chapaContacto!),
-            'Sistema electrico':convertStringToBool(acta.sistemaElectrico!),
-            'Horometro': convertStringToBool(acta.horometro!),
-
-            'Palanca comandos': convertStringToBool(acta.palancaComando!),
-            'Switch de luces': convertStringToBool(acta.switchLuces!),
-            'Switch de marchas': convertStringToBool(acta.switchMarcha!),
-            'Joystick':convertStringToBool(acta.joystick!),
+            'Bateria': convertStringToBool(acta.bateria),
+            'Chapa de contacto': convertStringToBool(acta.chapaContacto),
+            'Sistema electrico': convertStringToBool(acta.sistemaElectrico),
+            'Horometro': convertStringToBool(acta.horometro),
+            'Palanca comandos': convertStringToBool(acta.palancaComando),
+            'Switch de luces': convertStringToBool(acta.switchLuces),
+            'Switch de marchas': convertStringToBool(acta.switchMarcha),
+            'Joystick': convertStringToBool(acta.joystick),
           },
           {
             '': [false, false, false],
-            'Cadenas': convertStringToBool(acta.cadena!),
-            'Carro y su respaldo de carga': convertStringToBool(acta.carro!),
-            'Horquillas y seguros': convertStringToBool(acta.horquilla!),
-            'Jaula de proteccion': convertStringToBool(acta.jaula!),
-            'LLantas':convertStringToBool(acta.llantas!),
-            'Mastil': convertStringToBool(acta.mastil!),
-            'Pintura': convertStringToBool(acta.pintura!),
-            'Ruedas':convertStringToBool(acta.rueda!),
+            'Cadenas': convertStringToBool(acta.cadena),
+            'Carro y su respaldo de carga': convertStringToBool(acta.carro),
+            'Horquillas y seguros': convertStringToBool(acta.horquilla),
+            'Jaula de proteccion': convertStringToBool(acta.jaula),
+            'LLantas': convertStringToBool(acta.llantas),
+            'Mastil': convertStringToBool(acta.mastil),
+            'Pintura': convertStringToBool(acta.pintura),
+            'Ruedas': convertStringToBool(acta.rueda),
           },
           {
             '': [false, false, false],
-            'Desplazador lateral': convertStringToBool(acta.desplazadorLateral!),
-            'Direccion': convertStringToBool(acta.direccion!),
-            'Freno mano': convertStringToBool(acta.frenoMano!),
-            'Freno pie':convertStringToBool(acta.frenoPie!),
-            'Inclinacion': convertStringToBool(acta.inclinacion!),
-            'Levante': convertStringToBool(acta.levante!),
-            'Nivel aceite hidraulico': convertStringToBool(acta.nivelAceiteHidraulico!),
-            'Serie cargador':convertStringToBool(acta.serieCargador!),
-            'Nivel liquido de freno': convertStringToBool(acta.nivelLiquinoFreno!),
-            'Cargador voltaje y amperaje': convertStringToBool(acta.cargadorVoltajeInfo!),
-            'Enchufes': convertStringToBool(acta.enchufe!),
+            'Desplazador lateral':
+                convertStringToBool(acta.desplazadorLateral),
+            'Direccion': convertStringToBool(acta.direccion),
+            'Freno mano': convertStringToBool(acta.frenoMano),
+            'Freno pie': convertStringToBool(acta.frenoPie),
+            'Inclinacion': convertStringToBool(acta.inclinacion),
+            'Levante': convertStringToBool(acta.levante),
+            'Nivel aceite hidraulico':
+                convertStringToBool(acta.nivelAceiteHidraulico),
+            'Serie cargador': convertStringToBool(acta.serieCargador),
+            'Nivel liquido de freno':
+                convertStringToBool(acta.nivelLiquinoFreno),
+            'Cargador voltaje y amperaje':
+                convertStringToBool(acta.cargadorVoltajeInfo),
+            'Enchufes': convertStringToBool(acta.enchufe),
           }
         ]
       };
@@ -507,18 +607,18 @@ class ActaState extends ChangeNotifier {
               select: "NO",
               options: ["SI", "NO"]),
           'Carro y su respaldo de carga': AuxSelectItem(
-              text: "Respaldo de carga",
+              text: "Respaldo",
               tipo: "select",
               select: "NO",
-              options: ["SI", "NO"])
+              options: ["SI", "NO"]),
         },
         "TEXT_CAMP": {
-          'Espejos': "0",
-          'Focos faeneros delanteros': "0",
-          'Focos faeneros traseros': "0",
-          'LLave de contacto': "0",
-          'Intermitentes delanteros': "0",
-          'Intermitentes traseros': "0",
+          'Espejos': "",
+          'Focos faeneros delanteros': "",
+          'Focos faeneros traseros': "",
+          'LLave de contacto': "",
+          'Intermitentes delanteros': "",
+          'Intermitentes traseros': "",
           'Ruedas': "0",
         },
         "SELECT_CAMP": [
@@ -596,7 +696,7 @@ class ActaState extends ChangeNotifier {
       MapOfValue['ACTA'] = {
         "OPTION_SELECT": {
           'Carro y su respaldo de carga': AuxSelectItem(
-              text: "Respaldo de carga",
+              text: "Respaldo",
               select: "NO",
               tipo: "select",
               options: ["SI", "NO"]),
@@ -611,23 +711,23 @@ class ActaState extends ChangeNotifier {
               options: ["48V", "24V"]),
           'Enchufes': AuxSelectItem(
               text: "Tipo enchufe",
-              select: "16V POLO 4",
+              select: "16A POLO 4",
               tipo: "select",
               options: [
-                "16V POLO 4",
-                "16V POLO 5",
-                "32V POLO 4",
-                "32V POLO 5"
+                "16A POLO 4",
+                "16A POLO 5",
+                "32A POLO 4",
+                "32A POLO 5"
               ]),
         },
         "TEXT_CAMP": {
-          'Espejos': "0",
-          'Focos faeneros delanteros': "0",
-          'Focos faeneros traseros': "0",
-          'LLave de contacto': "0",
-          'Intermitentes delanteros': "0",
-          'Intermitentes traseros': "0",
-          'Ruedas': "0",
+          'Espejos': "",
+          'Focos faeneros delanteros': "",
+          'Focos faeneros traseros': "",
+          'LLave de contacto': "",
+          'Intermitentes delanteros': "",
+          'Intermitentes traseros': "",
+          'Ruedas': "",
         },
         "SELECT_CAMP": [
           {
@@ -663,7 +763,6 @@ class ActaState extends ChangeNotifier {
             'Chapa de contacto': [false, false, false],
             'Sistema electrico': [false, false, false],
             'Horometro': [false, false, false],
-
             'Palanca comandos': [false, false, false],
             'Switch de luces': [false, false, false],
             'Switch de marchas': [false, false, false],
@@ -698,6 +797,11 @@ class ActaState extends ChangeNotifier {
       };
     }
 
+    notifyListeners();
+  }
+
+  setMastilEquipo(String value) {
+    MapOfValue['mastilEquipo'] = value;
     notifyListeners();
   }
 
@@ -751,6 +855,38 @@ class ActaState extends ChangeNotifier {
   setFieldSpecialCargadorVoltaje(String text) {
     MapOfValue['ACTA']['OPTION_SELECT']['Cargador voltaje y amperaje'].select =
         text;
+    notifyListeners();
+  }
+
+  setFieldSpecialLlave(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['LLave de contacto'].select = text;
+    notifyListeners();
+  }
+
+  setFieldSpecialFocosT(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['Focos faeneros traseros'].select =
+        text;
+    notifyListeners();
+  }
+
+  setFieldSpecialFocosD(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['Focos faeneros delanteros'].select =
+        text;
+    notifyListeners();
+  }
+
+  setFieldSpecialEspejos(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['Espejos'].select = text;
+    notifyListeners();
+  }
+
+  setFieldSpecialAlarma(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['Alarma retroceso'].select = text;
+    notifyListeners();
+  }
+
+  setFieldSpecialExtintor(String text) {
+    MapOfValue['ACTA']['OPTION_SELECT']['Extintor'].select = text;
     notifyListeners();
   }
 
@@ -846,12 +982,17 @@ class ActaState extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<bool> convertStringToBool(String param) {
+  List<bool> convertStringToBool(String? param) {
+    if(param == null){
+      return [false, false, false];
+    }
     if (param == 'bueno') {
       return [true, false, false];
     } else if (param == 'regular') {
       return [false, true, false];
+    } else {
+      return [false, false, true];
     }
-    return [false, false, true];
+
   }
 }

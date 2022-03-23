@@ -51,7 +51,11 @@ dependencies:
   pattern_formatter: ^2.0.0
   smart_select: ^4.3.2
   progress_dialog: ^1.2.4
-
+  data_table_2: ^2.2.1
+  syncfusion_flutter_datagrid: ^19.4.55
+  syncfusion_flutter_core: ^19.4.55
+  flutter_layout_grid: ^1.0.6
+  syncfusion_flutter_datepicker: ^19.4.55
 
 
 

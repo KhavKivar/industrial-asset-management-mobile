@@ -2,12 +2,12 @@ class Strings {
 
   //Server
   static const String urlServerReal = "http://54.242.41.108";
-  //Dev Server
+  //Dev Serverx
   static const String localServer = "http://10.0.2.2:3000";
   //Desktop Sv
   static const String desktopLocalSv = "http://localhost:3000";
 
-  static const String urlServer = desktopLocalSv;
+  static const String urlServer = urlServerReal;
 
 
   static const String urlServerGetEquipos = urlServer+"/api/equipo";
@@ -20,5 +20,7 @@ class Strings {
   static const String urlServerGetUpdateState= urlServer+"/api/getLastUpdate/";
   static const String urlServerEditInps = urlServer+"/api/inspeccion/id/";
   static const String urlServerGetMovimientos = urlServer+"/api/movimiento/";
+
+  static const String urlServerGetClientes = urlServer + "/api/cliente/";
 
 }

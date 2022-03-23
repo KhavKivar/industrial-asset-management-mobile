@@ -95,15 +95,16 @@ class InspeccionAdapter extends TypeAdapter<Inspeccion> {
       cargadorVoltajeInfo: fields[76] as String?,
       enchufeInfo: fields[77] as String?,
       cilindroDeGas: fields[73] as int?,
-      horometroActual: fields[78] as int?,
-      ts: fields[79] as DateTime?,
+      horometroActual: fields[78] as double?,
+      mastilEquipo: fields[79] as String?,
+      ts: fields[86] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Inspeccion obj) {
     writer
-      ..writeByte(80)
+      ..writeByte(81)
       ..writeByte(0)
       ..write(obj.idInspeccion)
       ..writeByte(1)
@@ -263,6 +264,8 @@ class InspeccionAdapter extends TypeAdapter<Inspeccion> {
       ..writeByte(78)
       ..write(obj.horometroActual)
       ..writeByte(79)
+      ..write(obj.mastilEquipo)
+      ..writeByte(86)
       ..write(obj.ts);
   }
 

@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../model/equipo.dart';
 import '../model/updateTime.dart';
 import '../services/hive_services.dart';
@@ -10,6 +15,7 @@ class EquipoRepository {
   Future<List<Equipo>> get(bool forceUpdate) async {
     bool exists = await hiveService.isExists(boxName: "Equipos");
     List<Equipo> equipos = [];
+
     if(exists && !forceUpdate){
       print("Cache equipos");
       var eq = await(hiveService.getBoxes('Equipos'));

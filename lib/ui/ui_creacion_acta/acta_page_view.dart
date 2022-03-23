@@ -8,9 +8,12 @@ import 'package:app_licman/ui/ui_creacion_acta/acta_general_part_2_page.dart';
 import 'package:app_licman/widget/bottomNavigator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../main.dart';
 import '../../model/state/actaState.dart';
+import '../tabla_actas/all_actas_page.dart';
 
 class ActaPageView extends StatefulWidget {
   const ActaPageView({Key? key, this.edit, int? this.id, this.onlyCacheSave, this.data}) : super(key: key);
@@ -22,9 +25,31 @@ class ActaPageView extends StatefulWidget {
   _ActaPageViewState createState() => _ActaPageViewState();
 }
 
+
+
 class _ActaPageViewState extends State<ActaPageView> {
   final PageController controller = PageController();
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    FocusNode? _focusNode = FocusScope.of(context).focusedChild;
+    if(_focusNode == null){
 
+      FocusScope.of(context).previousFocus();
+
+    }
+
+
+  }
+  int select = 0;
+
+  callBack(int value){
+    setState(() {
+      Provider.of<CommonState>(context, listen: false)
+          .changeActaIndex(value);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,55 +69,89 @@ class _ActaPageViewState extends State<ActaPageView> {
 
           },),
         ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Padding(
-                    padding:
-                        const EdgeInsets.only(left: 30, right: 30, top: 10),
-                    child: TopNavigator(
-                      controller: controller,
-                    )),
-                Expanded(
-                  child: PageView(
-                    controller: controller,
-                    physics: NeverScrollableScrollPhysics(),
+        body: Shortcuts(
+          manager: LoggingShortcutManager(),
+          shortcuts: <LogicalKeySet, Intent>{
+            LogicalKeySet(LogicalKeyboardKey.arrowRight): const nextPageIntent(),
+            LogicalKeySet(LogicalKeyboardKey.arrowLeft): const previousPageIntent(),
+            LogicalKeySet(LogicalKeyboardKey.escape): const closePageIntent()
+          },
+          child: Actions(
+            dispatcher: LoggingActionDispatcher(),
+            actions: {
+              nextPageIntent: nextPageAction(controller,callBack),
+              previousPageIntent: previousPageAction(controller,callBack),
+              closePageIntent: closePageAction(context,callBack_close)
+            },
+            child: FocusScope(
+              autofocus: true,
+              onFocusChange: (hasFocus) {
+
+                FocusNode? _focusNode = FocusScope.of(context).focusedChild;
+
+                if(hasFocus) {
+                  // do stuff
+                }
+              },
+
+              child: Stack(
+                children: [
+                  Column(
                     children: [
-                      SingleChildScrollView(
-                        child: ActaGeneral(),
-                      ),
-                      actaGeneralPartTwo(
-                        editar: widget.edit,
-                        id: widget.id,
-                        onlyCache: widget.onlyCacheSave,
-                        data:widget.data
+                      Padding(
+                          padding:
+                              const EdgeInsets.only(left: 30, right: 30, top: 10),
+                          child: TopNavigator(
+                            controller: controller, select: select,
+                          )),
+                      Expanded(
+                        child: PageView(
+                          controller: controller,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            SingleChildScrollView(
+                              child: ActaGeneral(),
+                            ),
+                            actaGeneralPartTwo(
+                              editar: widget.edit,
+                              id: widget.id,
+                              onlyCache: widget.onlyCacheSave,
+                              data:widget.data
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  callBack_close() {
+
+    Provider.of<ActaState>(context, listen: false).reset();
+  }
 }
 
 class TopNavigator extends StatefulWidget {
-  const TopNavigator({Key? key, required this.controller}) : super(key: key);
+   TopNavigator({Key? key, required this.controller,required this.select}) : super(key: key);
   final PageController controller;
+  int select;
   @override
   _TopNavigatorState createState() => _TopNavigatorState();
 }
 
 class _TopNavigatorState extends State<TopNavigator> {
-  var select;
+
 
   @override
   void didChangeDependencies() {
-    select = Provider.of<CommonState>(context).actaSelectItem;
+    widget.select = Provider.of<CommonState>(context).actaSelectItem;
   }
 
   final double fontSizeNav = 20;
@@ -117,7 +176,7 @@ class _TopNavigatorState extends State<TopNavigator> {
             child: Container(
                 height: double.infinity,
                 decoration: BoxDecoration(
-                    color: select == 0 ? Colors.blueAccent : dark,
+                    color: widget.select == 0 ? Colors.blueAccent : dark,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(5),
                       bottomLeft: Radius.circular(5),
@@ -140,7 +199,11 @@ class _TopNavigatorState extends State<TopNavigator> {
             child: Container(
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: select == 1 ? Colors.blueAccent : dark,
+                  color: widget.select == 1 ? Colors.blueAccent : dark,
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(5),
+                    bottomRight: Radius.circular(5),
+                  ),
                 ),
                 child: RowNavigator(
                   iconData: Icons.person,

@@ -50,7 +50,6 @@ class _ColaActaPageState extends State<ColaActaPage> {
         ),
         body: Stack(
           children: [
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: SingleChildScrollView(
@@ -67,17 +66,33 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                List<Cola> colas =
-                                    Provider.of<EquipoState>(context, listen: false)
-                                        .listCola;
+                                List<Cola> colas = Provider.of<EquipoState>(
+                                        context,
+                                        listen: false)
+                                    .listCola;
+                                List<Cola> toRemove = [];
                                 if (colas.length > 0) {
+                                  print("cola ${colas.length}");
                                   for (int i = 0; i < colas.length; i++) {
                                     Cola cola = colas[i];
-                                    String urlImg = await enviarImagen(cola.data);
-                                    bool result = await enviarActa(cola, urlImg, context, i);
-                                    if(result){
-                                      cola.delete();
+                                    try {
+                                      bool resultx =
+                                          await enviarActa(cola, context, i);
+                                      print("i ${i} result ${resultx}");
+                                      if (resultx) {
+                                        print("result ok ${i}");
+                                        toRemove.add(cola);
+                                      }
+                                    } catch (e) {
+                                      print(e);
                                     }
+                                  }
+                                }
+                                if(toRemove.length>0){
+                                  for(int i=0;i<toRemove.length;i++){
+                                    Cola colaDelete = toRemove[i];
+                                    Provider.of<EquipoState>(context, listen: false).removeCola(colaDelete);
+                                    colaDelete.delete();
                                   }
                                 }
                                 await Future.delayed(Duration(seconds: 1));
@@ -119,7 +134,6 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                 )),
                                 DataCell(Text(listaCola[i].ts,
                                     style: TextStyle(fontSize: fontSizeRow))),
-
                                 DataCell(
                                   Row(
                                     children: [
@@ -129,27 +143,42 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => ActaOnlyView(
-                                                        inspeccion: listaCola[i].acta!,
-                                                        data: listaCola[i].data == null
+                                                  builder: (context) =>
+                                                      ActaOnlyView(
+                                                        inspeccion:
+                                                            listaCola[i].acta!,
+                                                        data: listaCola[i]
+                                                                    .data ==
+                                                                null
                                                             ? null
                                                             : listaCola[i].data,
                                                       )));
                                         },
                                       ),
-                                      IconButton(onPressed: (){
-                                        Inspeccion acta = listaCola[i].acta!;
-                                        Provider.of<ActaState>(context,listen: false).convertObjectTostate(acta, context);
-                                        Provider.of<EquipoState>(context,listen: false).setIndexCola(i);
+                                      IconButton(
+                                          onPressed: () {
+                                            Inspeccion acta =
+                                                listaCola[i].acta!;
+                                            Provider.of<ActaState>(context,
+                                                    listen: false)
+                                                .convertObjectTostate(
+                                                    acta, context);
+                                            Provider.of<EquipoState>(context,
+                                                    listen: false)
+                                                .setIndexCola(i);
 
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ActaPageView(edit: true,onlyCacheSave:true,data: listaCola[i].data,) ));
-
-
-                                      }, icon: Icon(Icons.edit))
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ActaPageView(
+                                                          edit: true,
+                                                          onlyCacheSave: true,
+                                                          data:
+                                                              listaCola[i].data,
+                                                        )));
+                                          },
+                                          icon: Icon(Icons.edit))
                                     ],
                                   ),
                                 ),
@@ -161,22 +190,24 @@ class _ColaActaPageState extends State<ColaActaPage> {
                             label: Text(
                               'Acta ID',
                               style: TextStyle(
-                                  color: Colors.white, fontSize: fontSizeRowHead),
+                                  color: Colors.white,
+                                  fontSize: fontSizeRowHead),
                             ),
                           ),
                           DataColumn(
                             label: Text(
                               'Fecha',
                               style: TextStyle(
-                                  color: Colors.white, fontSize: fontSizeRowHead),
+                                  color: Colors.white,
+                                  fontSize: fontSizeRowHead),
                             ),
                           ),
-
                           DataColumn(
                             label: Text(
                               'Acciones',
                               style: TextStyle(
-                                  color: Colors.white, fontSize: fontSizeRowHead),
+                                  color: Colors.white,
+                                  fontSize: fontSizeRowHead),
                             ),
                           ),
                         ],
@@ -186,8 +217,12 @@ class _ColaActaPageState extends State<ColaActaPage> {
                 ),
               ),
             ),
-            if(isLoading) Container(color: dark.withOpacity(0.5),width: double.infinity,height: double.infinity,
-            child:Center(child: CircularProgressIndicator())),
+            if (isLoading)
+              Container(
+                  color: dark.withOpacity(0.5),
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Center(child: CircularProgressIndicator())),
           ],
         ));
   }
@@ -221,19 +256,70 @@ class _ColaActaPageState extends State<ColaActaPage> {
     }
   }
 
-  Future<bool> enviarActa(Cola cola, String url, context, int index) async {
+  Future<bool> enviarActa(Cola cola, context, int index) async {
     Inspeccion acta = cola.acta!;
-    acta.firmaUrl = url;
-    final result = await sendActa(acta);
-    if (result != null) {
-      Provider.of<EquipoState>(context, listen: false).addActa(result);
-      Provider.of<EquipoState>(context, listen: false)
-          .setHorometro(acta.idEquipo!, acta.horometroActual!);
-      Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
-      //Eliminar la cola del provider y despues del cache
-      Provider.of<EquipoState>(context, listen: false).removeCola(cola);
-      return true;
-    } else {
+
+    String urlImg = await enviarImagen(cola.data);
+    acta.firmaUrl = urlImg;
+
+    try {
+      final result = await sendActa(acta);
+      if (result != null) {
+        print("entro cola ${cola.acta?.idInspeccion.toString()}");
+        Provider.of<EquipoState>(context, listen: false).addActa(result);
+        Provider.of<EquipoState>(context, listen: false)
+            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
+        //Eliminar la cola del provider y despues del cache
+
+        return true;
+      }
+    } on SocketException {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(milliseconds: 1000),
+          content: Row(
+            children: [
+              Icon(
+                Icons.dangerous,
+                color: Colors.red,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Text(
+                  "NO SE PUDO ENVIAR LA ACTA ID EQUIPO: " +
+                      acta.idEquipo.toString() +
+                      " Error: No hay internet",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          )));
+    } on HttpException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(milliseconds: 2000),
+          content: Row(
+            children: [
+              Icon(
+                Icons.dangerous,
+                color: Colors.red,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Text(
+                  "NO SE PUDO ENVIAR LA ACTA ID EQUIPO: " +
+                      acta.idEquipo.toString() +
+                      " Error:" +
+                      e.toString(),
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          )));
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(milliseconds: 1000),
           content: Row(
@@ -252,9 +338,7 @@ class _ColaActaPageState extends State<ColaActaPage> {
               ),
             ],
           )));
-      return false;
     }
+    return false;
   }
-
-
 }

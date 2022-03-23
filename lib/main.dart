@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:app_licman/model/cliente.dart';
 import 'package:app_licman/model/equipo.dart';
 import 'package:app_licman/model/movimiento.dart';
 import 'package:app_licman/model/state/equipoState.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'const/Colors.dart';
 import 'model/cola.dart';
@@ -38,8 +40,13 @@ void main() async {
   if (kIsWeb) {
     await Hive.initFlutter();
   } else {
+
     final appDirectory = await path_provider.getApplicationDocumentsDirectory();
-    Hive.init(appDirectory.path+"/data/");
+
+
+
+     Hive.init(appDirectory.path+"/data/hive/");
+
   }
   Hive.registerAdapter(EquipoAdapter());
   Hive.registerAdapter(ModeloImgAdapter());
@@ -47,6 +54,8 @@ void main() async {
   Hive.registerAdapter(UpdateTimeAdapter());
   Hive.registerAdapter(ColaAdapter());
   Hive.registerAdapter(MovimientoAdapter());
+  Hive.registerAdapter(ClienteAdapter());
+
   runApp( MyApp());
 
 }
@@ -60,6 +69,168 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
     // etc.
   };
 }
+
+/// A ShortcutManager that logs all keys that it hapndles.
+class LoggingShortcutManager extends ShortcutManager {
+  @override
+  KeyEventResult handleKeypress(BuildContext context, RawKeyEvent event) {
+    final KeyEventResult result = super.handleKeypress(context, event);
+
+    if (result == KeyEventResult.handled) {
+
+    }
+    return result;
+  }
+}
+
+
+
+/// TextEditingController.
+class nextPageIntent extends Intent {
+  const nextPageIntent();
+}
+
+
+class nextPageAction extends Action<nextPageIntent> {
+  nextPageAction(this.controller,[this.callback]);
+  final PageController controller;
+  dynamic callback;
+
+  @override
+  Object? invoke(covariant nextPageIntent intent) {
+    if(callback  != null){
+        callback(1);
+    }
+
+    controller.nextPage(
+        duration: Duration(milliseconds: 400),
+        curve: Curves.easeInOut);
+    return null;
+  }
+}
+/// TextEditingController.
+class previousPageIntent extends Intent {
+  const previousPageIntent();
+}
+
+
+class previousPageAction extends Action<previousPageIntent> {
+  previousPageAction(this.controller,[this.callback]);
+  final PageController controller;
+  dynamic callback;
+
+
+
+  @override
+  Object? invoke(covariant previousPageIntent intent) {
+    if(callback  != null){
+      callback(0);
+    }
+      controller.previousPage(
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut);
+
+    return null;
+  }
+}
+
+
+
+/// TextEditingController.
+class downIntent extends Intent {
+  const downIntent();
+}
+
+
+class downAction extends Action<downIntent> {
+  downAction(this.controller);
+  var controller;
+
+
+
+  @override
+  Object? invoke(covariant downIntent intent) {
+    if(controller is DataGridController){
+
+      controller.scrollToVerticalOffset(controller.verticalOffset+100.0,canAnimate:true);
+    }else{
+
+
+    controller.animateTo(
+        controller.offset+150,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease
+    ) ;
+    }
+    return null;
+  }
+}
+
+
+
+/// TextEditingController.
+class upIntent extends Intent {
+  const upIntent();
+}
+
+
+class upAction extends Action<upIntent> {
+  upAction(this.controller);
+  var  controller;
+
+
+
+  @override
+  Object? invoke(covariant upIntent intent) {
+    if(controller is DataGridController){
+
+       controller.scrollToVerticalOffset(controller.verticalOffset-200.0,canAnimate:true);
+    }else{
+    controller.animateTo(
+        controller.offset-150,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease
+    ) ;}
+    return null;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class closePageIntent extends Intent {
+  const closePageIntent();
+}
+
+
+class closePageAction extends Action<closePageIntent> {
+  closePageAction(this.context,[this.callBack]);
+  var context;
+  dynamic callBack;
+
+
+  @override
+  Object? invoke(covariant closePageIntent intent) {
+
+    if(callBack != null){
+      callBack();
+    }
+    Navigator.pop(context);
+
+    return null;
+  }
+}
+
 
 
 class MyApp extends StatelessWidget {

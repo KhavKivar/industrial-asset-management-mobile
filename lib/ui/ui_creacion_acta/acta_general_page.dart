@@ -21,7 +21,6 @@ import 'package:signature/signature.dart';
 
 import '../ui_acta/acta_inspeccion_page.dart';
 
-
 class ActaGeneral extends StatefulWidget {
   const ActaGeneral({Key? key}) : super(key: key);
 
@@ -29,7 +28,8 @@ class ActaGeneral extends StatefulWidget {
   _ActaGeneralState createState() => _ActaGeneralState();
 }
 
-class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClientMixin  {
+class _ActaGeneralState extends State<ActaGeneral>
+    with AutomaticKeepAliveClientMixin {
   late final equiposStateProvider;
   TextEditingController? _typeAheadController;
   TextEditingController? altureLevanteController;
@@ -37,17 +37,23 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
 
   Equipo? equipoSelect = null;
 
+  String? dropdownValue = null;
+
   @override
   void initState() {
     super.initState();
     equiposStateProvider = Provider.of<EquipoState>(context, listen: false);
-    _typeAheadController = TextEditingController(text:  Provider.of<ActaState>(context,listen: false).MapOfValue['id']);
+    _typeAheadController = TextEditingController(
+        text: Provider.of<ActaState>(context, listen: false).MapOfValue['id']);
 
-    altureLevanteController =  TextEditingController(text:  Provider.of<ActaState>(context,listen: false).MapOfValue['alturaLevante']);
-    horometroActualController =  TextEditingController(text:  Provider.of<ActaState>(context,listen: false).MapOfValue['horometroActual']);
-
+    altureLevanteController = TextEditingController(
+        text: Provider.of<ActaState>(context, listen: false)
+            .MapOfValue['alturaLevante']);
+    horometroActualController = TextEditingController(
+        text: Provider.of<ActaState>(context, listen: false)
+            .MapOfValue['horometroActual']);
+    dropdownValue = Provider.of<ActaState>(context,listen: false).MapOfValue['mastilEquipo'];
   }
-
 
   @override
   void didChangeDependencies() {
@@ -56,12 +62,12 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
     equipoSelect = Provider.of<ActaState>(context).MapOfValue['equipo'];
   }
 
-
   @override
   void dispose() {
     _typeAheadController?.dispose();
     super.dispose();
   }
+
   late bool tipo;
 
   final double fontSizeTextRow = 22;
@@ -70,24 +76,23 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
     super.build(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    tipo =   Provider.of<ActaState>(context).MapOfValue['tipo'];
+    tipo = Provider.of<ActaState>(context).MapOfValue['tipo'];
 
     return Provider.of<EquipoState>(context).loading == true
-          ? Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text("Loading"),
-                ],
-              ),
-            )
-          : Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 30),
+        ? Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text("Loading"),
+              ],
+            ),
+          )
+        : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: [
                 const SizedBox(
@@ -98,8 +103,10 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3),
                       child: TypeAheadField(
+
                         textFieldConfiguration: TextFieldConfiguration(
-                          onChanged: Provider.of<ActaState>(context).setId,
+
+                            onChanged: Provider.of<ActaState>(context).setId,
                             controller: _typeAheadController,
                             style: TextStyle(color: dark, fontSize: 23),
                             decoration: InputDecoration(
@@ -123,15 +130,14 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                           return suggestCodigo
                               .where((element) => element
                                   .toString()
-                                  .contains(
-                                      pattern.toString().toLowerCase()))
+                                  .contains(pattern.toString().toLowerCase()))
                               .toList();
                         },
                         itemBuilder: (context, suggestion) {
                           List<Equipo> equipos =
                               equiposStateProvider.getEquipo();
-                          int index = equipos.lastIndexWhere((element) =>
-                              element.id.toString() == suggestion);
+                          int index = equipos.lastIndexWhere(
+                              (element) => element.id.toString() == suggestion);
 
                           return ListTile(
                             leading: Icon(
@@ -160,22 +166,23 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                               equiposStateProvider.getEquipo();
                           _typeAheadController?.text = suggestion;
 
-                          Provider.of<ActaState>(context,listen: false).setId(suggestion);
+                          Provider.of<ActaState>(context, listen: false)
+                              .setId(suggestion);
 
                           equipoSelect = equipos.firstWhere((element) =>
-                              element.id.toString() ==
-                              suggestion.toString());
-                          Provider.of<ActaState>(context,listen: false).setEquipo(equipoSelect!);
+                              element.id.toString() == suggestion.toString());
+                          Provider.of<ActaState>(context, listen: false)
+                              .setEquipo(equipoSelect!);
                           //True -> acta equipo
-                          if(equipoSelect!.tipo.contains("Grúa gas")   ||equipoSelect!.tipo.contains("Grúa petrolera")   ){
-                            Provider.of<ActaState>(context,listen: false).setTipo(true);
-                          }else{
-                            Provider.of<ActaState>(context,listen: false).setTipo(false);
+                          if (equipoSelect!.tipo.contains("Grúa gas") ||
+                              equipoSelect!.tipo.contains("Grúa petrolera")) {
+                            Provider.of<ActaState>(context, listen: false)
+                                .setTipo(true);
+                          } else {
+                            Provider.of<ActaState>(context, listen: false)
+                                .setTipo(false);
                           }
                           //False ->acta electrica
-
-
-
                         },
                       ),
                     ),
@@ -198,22 +205,23 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                 child: TextField(
                                   controller: altureLevanteController,
                                   inputFormatters: <TextInputFormatter>[
-
-                                    FilteringTextInputFormatter.allow(RegExp(r'^[0-9]+[,.]{0,1}[0-9]{0,2}$')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^[0-9]+[,.]{0,1}[0-9]{0,2}$')),
                                     TextInputFormatter.withFunction(
-                                          (oldValue, newValue) => newValue.copyWith(
-                                        text: newValue.text.replaceAll(',', '.'),
+                                      (oldValue, newValue) => newValue.copyWith(
+                                        text:
+                                            newValue.text.replaceAll(',', '.'),
                                       ),
                                     ),
                                   ],
-
                                   onChanged: (value) {
-                                    Provider.of<ActaState>(context, listen: false)
+                                    Provider.of<ActaState>(context,
+                                            listen: false)
                                         .setAlturaLevante(value);
-
                                   },
                                   style: TextStyle(color: dark, fontSize: 23),
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
                                   maxLength: 10,
                                   decoration: const InputDecoration(
                                       counterText: '',
@@ -221,10 +229,13 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                       fillColor: Colors.white,
                                       filled: true,
                                       focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 1.0),
                                       ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.black, width: 1),
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 1),
                                       ),
                                       hintText: 'Altura de levante',
                                       prefixIcon: Icon(
@@ -233,32 +244,42 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                       )),
                                 ),
                               ),
-                              const SizedBox(width: 20,),
+                              const SizedBox(
+                                width: 20,
+                              ),
                               Expanded(
                                 child: TextField(
                                   controller: horometroActualController,
                                   inputFormatters: [
-
-                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^[0-9]+[,.]{0,1}[0-9]{0,2}$')),
+                                    TextInputFormatter.withFunction(
+                                      (oldValue, newValue) => newValue.copyWith(
+                                        text:
+                                            newValue.text.replaceAll(',', '.'),
+                                      ),
+                                    ),
                                   ],
-
                                   onChanged: (value) {
-                                    Provider.of<ActaState>(context, listen: false)
+                                    Provider.of<ActaState>(context,
+                                            listen: false)
                                         .setHorometroActual(value);
-
                                   },
                                   style: TextStyle(color: dark, fontSize: 23),
                                   keyboardType: TextInputType.number,
-                                  maxLength:9,
+                                  maxLength: 9,
                                   decoration: const InputDecoration(
                                       counterText: '',
                                       fillColor: Colors.white,
                                       filled: true,
                                       focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.blueAccent, width: 1.0),
+                                        borderSide: BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 1.0),
                                       ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.black, width:1 ),
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 1),
                                       ),
                                       hintText: 'Horometro',
                                       prefixIcon: Icon(
@@ -273,11 +294,45 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                             height: 20,
                           ),
                           Container(
-                            width: double.infinity,
                             decoration: BoxDecoration(
-                              border: Border.all(color:Colors.black,width: 1),
+                              color:Colors.white,
+                                border:Border.all(color: Colors.black, width: 1),
                               borderRadius: BorderRadius.circular(5)
                             ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: DropdownButtonFormField<String>(
+                                value: dropdownValue,
+                                icon: const Icon(Icons.arrow_downward),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                  ),
+                                hint:Text("Mastil",style: TextStyle(fontSize: 20),),
+                                style:  TextStyle(color: dark),
+                                onChanged: (String? newValue) {
+                                  Provider.of<ActaState>(context,listen: false).setMastilEquipo(newValue!);
+                                },
+                                items: <String>['Simple', 'Doble', 'Triple']
+                                    .map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value,style: TextStyle(fontSize: 18),),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 1),
+                                borderRadius: BorderRadius.circular(5)),
                             child: TextButton(
                               onPressed: () {
                                 FocusScope.of(context).unfocus();
@@ -285,14 +340,14 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                           RegisterPage(tipo: tipo,)),
+                                      builder: (context) => RegisterPage(
+                                            tipo: tipo,
+                                          )),
                                 );
                               },
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                children:  [
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                                   Icon(
                                     Icons.content_paste,
                                     color: Colors.black,
@@ -302,9 +357,11 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                     width: 10,
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 5.0),
-                                    child: tipo ? Text("Acta de equipo"): Text("Acta electrica"),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 5.0),
+                                    child: tipo
+                                        ? Text("Acta de equipo")
+                                        : Text("Acta electrica"),
                                   ),
                                 ],
                               ),
@@ -313,10 +370,8 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
                                 primary: dark,
                                 shadowColor: Colors.white,
                                 elevation: 5,
-
                                 textStyle: TextStyle(
-                                    fontSize: 30,
-                                    fontStyle: FontStyle.normal),
+                                    fontSize: 30, fontStyle: FontStyle.normal),
                               ),
                             ),
                           ),
@@ -330,12 +385,12 @@ class _ActaGeneralState extends State<ActaGeneral> with AutomaticKeepAliveClient
               ],
             ),
           );
-
   }
 
   @override
   bool get wantKeepAlive => true; //
 }
+
 /*
 
 
@@ -351,7 +406,7 @@ class NumericTextFormatter extends TextInputFormatter {
           newValue.text.length - newValue.selection.end;
       final f = NumberFormat("#,###");
       final number =
-      int.parse(newValue.text.replaceAll(f.symbols.GROUP_SEP, ''));
+          int.parse(newValue.text.replaceAll(f.symbols.GROUP_SEP, ''));
       final newString = f.format(number);
       return TextEditingValue(
         text: newString,

@@ -13,7 +13,7 @@ Future<List<Equipo>> getEquipos() async {
   final client = http.Client();
   try {
     final response = await client.get(Uri.parse(Strings.urlServerGetEquipos));
-     print(response.body);
+
     if (response.statusCode == 200) {
 
       listado = (json.decode(response.body) as List)
@@ -34,7 +34,7 @@ Future<List<Inspeccion>> getInspecciones() async {
   try {
     final response =
         await client.get(Uri.parse(Strings.urlServerGetInspecciones));
-    log(response.body);
+
     listado = (json.decode(response.body) as List)
         .map((i) => Inspeccion.fromJson(i))
         .toList();
