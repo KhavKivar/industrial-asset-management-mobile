@@ -1,8 +1,8 @@
 import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/equipo.dart';
 import 'package:app_licman/model/modeloimagen.dart';
-import 'package:app_licman/model/state/equipoState.dart';
-import 'package:app_licman/ui/card_equipo_detalle.dart';
+import 'package:app_licman/model/state/app_state.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +37,7 @@ class CardEquipo extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     List<ModeloImg> modeloList =
-        Provider.of<EquipoState>(context, listen: false).imgList;
-
+        Provider.of<AppState>(context, listen: false).imgList;
 
     return LayoutBuilder(builder: (context, snapshot) {
       double maxHeight = snapshot.maxHeight;
@@ -132,13 +131,22 @@ class CardEquipo extends StatelessWidget {
                               )
                             ],
                           ),
-                          RowText( firstText: "Codigo interno",secondText: equipo.id.toString()),
-                          RowText( firstText: "Ubicacion",secondText: equipo.ubicacion.toString()),
-                          RowText( firstText: "Tipo",secondText: equipo.tipo.toString()),
-                          RowText( firstText: "Modelo",secondText: equipo.modelo.toString()),
-                          const SizedBox(height: 10,)
+                          RowText(
+                              firstText: "Codigo interno",
+                              secondText: equipo.id.toString()),
+                          RowText(
+                              firstText: "Ubicacion",
+                              secondText: equipo.ubicacion.toString()),
+                          RowText(
+                              firstText: "Tipo",
+                              secondText: equipo.tipo.toString()),
+                          RowText(
+                              firstText: "Modelo",
+                              secondText: equipo.modelo.toString()),
+                          const SizedBox(
+                            height: 10,
+                          )
                         ],
-
                       ),
                     ),
                   ),
@@ -149,99 +157,6 @@ class CardEquipo extends StatelessWidget {
     });
   }
 }
-/**
- *    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-    Text(
-    "Codigo interno",
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    Text(
-    "${equipo.id.toString()}",
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    ],
-    ),
-    Container(
-    height: 20,
-    width: double.infinity,
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-    Text(
-    "Ubicacion ",
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    Expanded(
-    child: Align(
-    alignment: Alignment.topRight,
-    child: FittedBox(
-    fit: BoxFit.scaleDown,
-    child: Text(
-    equipo.ubicacion.toCapitalized(),
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-    ),
-
-    Container(
-    height: 40,
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-    Text(
-    "Tipo ",
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    Expanded(
-    child: Align(
-    alignment: Alignment.topRight,
-    child: FittedBox(
-    fit: BoxFit.scaleDown,
-    child: Text(
-    "${equipo.tipo.toString()}",
-    style: TextStyle(
-    color: Colors.black,
-    fontSize: fontSizeText),
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-    ),
- *     Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Modelo",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: fontSizeText),
-                              ),
-                              Text(
-                                "${equipo.modelo.toString()}",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: fontSizeText),
-                              ),
-                            ],
-                          ),
- */
 
 class RowText extends StatelessWidget {
   const RowText({Key? key, required this.firstText, required this.secondText})
@@ -254,13 +169,15 @@ class RowText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             firstText,
             style: TextStyle(color: Colors.black, fontSize: fontSizeText),
           ),
-          const SizedBox(width: 30,),
+          const SizedBox(
+            width: 30,
+          ),
           Expanded(
             child: Align(
               alignment: Alignment.topRight,

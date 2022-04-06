@@ -3,7 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/state/actaState.dart';
+import 'package:app_licman/model/state/acta_state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_licman/plugins/dart_rut_form.dart';
 import 'package:app_licman/widget/bottomNavigator.dart';
@@ -20,20 +21,21 @@ import 'package:transparent_image/transparent_image.dart';
 
 import '../../model/cola.dart';
 import '../../model/inspeccion.dart';
-import '../../model/state/commonVarState.dart';
-import '../../model/state/equipoState.dart';
+import '../../model/state/common_var_state.dart';
+import '../../model/state/app_state.dart';
 import '../../services/generate_image_url.dart';
 import '../../services/inspeccion_services.dart';
 import '../../services/util.dart';
 
 class actaGeneralPartTwo extends StatefulWidget {
   const actaGeneralPartTwo(
-      {Key? key, this.editar, this.id, this.onlyCache, this.data})
+      {Key? key, this.editar, this.id, this.onlyCache, this.data, this.device})
       : super(key: key);
   final bool? editar;
   final int? id;
   final bool? onlyCache;
   final Uint8List? data;
+  final String? device;
   @override
   _actaGeneralPartTwoState createState() => _actaGeneralPartTwoState();
 }
@@ -137,6 +139,38 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
   bool showError = false;
   String message = '';
   bool changeFirm = false;
+
+  //Tablet
+  final double fontSizeTextCampTablet = 20;
+  final double iconSizeTextCampTablet = 28;
+  final double paddingBetweenTextCampTablet = 10;
+
+  //Desktop
+  final double fontSizeTextCampDesktop = 20;
+  final double iconSizeTextCampDesktop = 25;
+  final double paddingBetweenTextCampDesktop = 10;
+
+  getFontSize(device) {
+    if (device.toString() == 'tablet') {
+      return fontSizeTextCampTablet;
+    }
+    return fontSizeTextCampDesktop;
+  }
+
+  getIconSize(device) {
+    if (device.toString() == 'tablet') {
+      return iconSizeTextCampTablet;
+    }
+    return iconSizeTextCampDesktop;
+  }
+
+  getPaddingBetweenTextCamp(device) {
+    if (device.toString() == 'tablet') {
+      return paddingBetweenTextCampTablet;
+    }
+    return paddingBetweenTextCampDesktop;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -146,15 +180,14 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Column(
           children: [
             if (showError)
               Padding(
-                padding: const EdgeInsets.only(top:0,bottom: 10),
+                padding: const EdgeInsets.only(top: 0, bottom: 10),
                 child: Container(
                   width: double.infinity,
-
                   decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(5)),
@@ -165,12 +198,14 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                         Icon(
                           Icons.dangerous_outlined,
                           color: Colors.white,
-                          size: 34,
+                          size: getIconSize(widget.device),
                         ),
                         Expanded(
                           child: Text(
                             "Error: " + message,
-                            style: TextStyle(color: Colors.white, fontSize: 30),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: getFontSize(widget.device)),
                           ),
                         ),
                       ],
@@ -182,7 +217,6 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
               children: [
                 Expanded(
                   child: TextField(
-
                     controller: rutController,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]|k|K')),
@@ -193,12 +227,11 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                           .setRut(value);
                       RUTValidator.formatFromTextController(rutController!);
                     },
-
-                    
-                    style: TextStyle(color: dark, fontSize: 23),
+                    style: TextStyle(
+                        color: dark, fontSize: getFontSize(widget.device)),
                     keyboardType: TextInputType.name,
                     maxLength: 12,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         counterText: '',
                         fillColor: Colors.white,
                         filled: true,
@@ -206,18 +239,19 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                         hintText: 'Rut',
                         prefixIcon: Icon(
                           Icons.person,
-                          size: 30,
+                          size: getIconSize(widget.device),
                         )),
                   ),
                 ),
                 const SizedBox(
-                  width: 30,
+                  width: 20,
                 ),
                 Expanded(
                   child: TextField(
                     controller: nameController,
                     onChanged: Provider.of<ActaState>(context).setName,
-                    style: TextStyle(color: dark, fontSize: 23),
+                    style: TextStyle(
+                        color: dark, fontSize: getFontSize(widget.device)),
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -228,12 +262,13 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: getPaddingBetweenTextCamp(widget.device)),
             TextField(
               keyboardType: TextInputType.text,
               controller: obvController,
               onChanged: Provider.of<ActaState>(context).setObv,
-              style: TextStyle(color: dark, fontSize: 23),
+              style:
+                  TextStyle(color: dark, fontSize: getFontSize(widget.device)),
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 filled: true,
@@ -241,7 +276,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                 hintText: 'Observaciones',
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: getPaddingBetweenTextCamp(widget.device)),
             Stack(
               children: [
                 Signature(
@@ -259,26 +294,18 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                               ? Image.memory(
                                   widget.data!,
                                 )
-                              : Stack(
-                                  children: [
-                                    const Center(
-                                        child: CircularProgressIndicator()),
-                                    Center(
-                                      child: FadeInImage.memoryNetwork(
-                                        placeholder: kTransparentImage,
-                                        image: Provider.of<ActaState>(context,
-                                                        listen: false)
-                                                    .MapOfValue['firmaUrl'] !=
-                                                null
-                                            ? Provider.of<ActaState>(context,
-                                                    listen: false)
-                                                .MapOfValue['firmaUrl']
-                                            : "",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        )
+                              : Center(
+                                  child: CachedNetworkImage(
+                                    imageUrl: Provider.of<ActaState>(context,
+                                                listen: false)
+                                            .MapOfValue['firmaUrl'] ??
+                                        "",
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                                ))
                       : Container(
                           height: 250,
                           width: double.infinity,
@@ -342,8 +369,8 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                 ],
               ),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: getPaddingBetweenTextCamp(widget.device),
             ),
             widget.onlyCache != null
                 ? Container(
@@ -363,7 +390,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                           return;
                         }
                         final prov =
-                            Provider.of<EquipoState>(context, listen: false);
+                            Provider.of<AppState>(context, listen: false);
                         Cola cola = prov.listCola[prov.indexCola];
                         Inspeccion acta =
                             Provider.of<ActaState>(context, listen: false)
@@ -384,14 +411,15 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                         children: [
                           Icon(
                             Icons.save,
-                            size: 30,
+                            size: getIconSize(widget.device),
                           ),
                           const SizedBox(
                             width: 10,
                           ),
                           Text('Guardar',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 25)),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: getFontSize(widget.device))),
                         ],
                       ),
                     ),
@@ -422,17 +450,6 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                                     buttonState = ButtonState.loading;
                                   });
                                   enviarActaOnline();
-
-                                  /*
-                                  try {
-                                    if (internetOn || widget.editar != null) {
-                                      enviarActaOnline();
-                                    } else {
-                                      enviarActaOffline();
-                                    }
-                                  } on SocketException catch (e) {
-                                    enviarActaOffline();
-                                  }*/
                                 },
                                 style: OutlinedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -447,7 +464,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                                     Icon(
                                       Icons.send,
                                       color: Colors.white,
-                                      size: 35,
+                                      size: getIconSize(widget.device),
                                     ),
                                     const SizedBox(
                                       width: 10,
@@ -455,7 +472,9 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                                     Text(
                                       "Enviar",
                                       style: TextStyle(
-                                          fontSize: 30, color: Colors.white),
+                                          fontSize:
+                                              getFontSize(widget.device) + 5,
+                                          color: Colors.white),
                                     ),
                                   ],
                                 )))
@@ -509,27 +528,27 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
         });
         await Future.delayed(Duration(seconds: 1));
 
-        Provider.of<EquipoState>(context, listen: false).setActa(result);
-        Provider.of<EquipoState>(context, listen: false)
+        Provider.of<AppState>(context, listen: false).setActa(result);
+        Provider.of<AppState>(context, listen: false)
             .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
       }
-    }on SocketException{
+    } on SocketException {
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
         message = "Sin conexion";
       });
-    }on HttpException catch(e){
+    } on HttpException catch (e) {
       print(e.toString());
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
         message = e.toString();
       });
-    } catch(e){
+    } catch (e) {
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
@@ -542,8 +561,8 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
   Future<void> enviarActaOnline() async {
     //Editar
     if (widget.editar != null) {
-      String urlImg = Provider.of<ActaState>(context, listen: false)
-          .MapOfValue['firmaUrl'];
+      String urlImg =
+          Provider.of<ActaState>(context, listen: false).MapOfValue['firmaUrl'];
       if (await _controller.toPngBytes() != null) {
         urlImg = await getUrlImg();
       }
@@ -558,32 +577,29 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
     String urlImg = await getUrlImg();
     Inspeccion acta = Provider.of<ActaState>(context, listen: false)
         .convertMapToObject(urlImg);
-    try{
+    try {
       final result = await sendActa(acta);
       if (result != null) {
         setState(() {
           buttonState = ButtonState.done;
         });
         await Future.delayed(Duration(seconds: 1));
-        Provider.of<EquipoState>(context, listen: false).addActa(result);
-        Provider.of<EquipoState>(context, listen: false)
+        Provider.of<AppState>(context, listen: false).addActa(result);
+        Provider.of<AppState>(context, listen: false)
             .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
       }
-    }on SocketException{
-
+    } on SocketException {
       enviarActaOffline();
-    }on HttpException catch(e){
-
+    } on HttpException catch (e) {
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
         message = e.toString();
       });
-    } catch(e){
-
+    } catch (e) {
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
@@ -592,8 +608,6 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
     }
     return;
   }
-
-
 
   Future<void> enviarActaOffline() async {
     final Uint8List? data = await _controller.toPngBytes();
@@ -615,11 +629,11 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
           ),
           const SizedBox(width: 5),
           Text('Sin conexion a internet, se envio a la cola de actas',
-              style: TextStyle(fontSize: 18)),
+              style: TextStyle(fontSize: getFontSize(widget.device))),
         ],
       ),
     ));
-    Provider.of<EquipoState>(context, listen: false).addCola(cola);
+    Provider.of<AppState>(context, listen: false).addCola(cola);
     Provider.of<ActaState>(context, listen: false).reset();
     Navigator.pop(context);
   }
@@ -646,7 +660,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
       return true;
     }*/
 
-    if(mastil == null){
+    if (mastil == null) {
       setState(() {
         showError = true;
       });
@@ -693,10 +707,10 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
   }
 }
 
-
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     return TextEditingValue(
       text: newValue.text.toLowerCase(),
       selection: newValue.selection,

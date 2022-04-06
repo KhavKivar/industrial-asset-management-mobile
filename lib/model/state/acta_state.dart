@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/state/equipoState.dart';
+import 'package:app_licman/model/state/app_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../equipo.dart';
 import 'package:app_licman/plugins/dart_rut_form.dart';
-
 
 extension StringCasingExtension on String {
   String toCapitalized() =>
@@ -45,18 +44,17 @@ class AuxSelectItem {
 }
 
 String? convertBoolToString(List<bool>? listValue) {
-  if(listValue ==null){
+  if (listValue == null) {
     return null;
   }
   if (listValue[0]) {
     return "bueno";
   } else if (listValue[1]) {
     return "regular";
-  }else if(listValue[2]){
+  } else if (listValue[2]) {
     return "malo";
   }
   return null;
-
 }
 
 class ActaState extends ChangeNotifier {
@@ -88,7 +86,8 @@ class ActaState extends ChangeNotifier {
     acta.alarmaRetroceso = convertBoolToString(
         MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']);
 
-    print("alarma retroceso ${ MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']}");
+    print(
+        "alarma retroceso ${MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']}");
 
     acta.extintor =
         convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Extintor']);
@@ -334,16 +333,14 @@ class ActaState extends ChangeNotifier {
     MapOfValue['rut'] = acta.rut.toString();
     MapOfValue['name'] = acta.nombre.toString();
     MapOfValue['obv'] = acta.observacion.toString();
-    MapOfValue['equipo'] = Provider.of<EquipoState>(context, listen: false)
+    MapOfValue['equipo'] = Provider.of<AppState>(context, listen: false)
         .equipos
         .firstWhere((element) => element.id == acta.idEquipo);
-
 
     MapOfValue['alturaLevante'] = acta.alturaLevante.toString();
     MapOfValue['firmaUrl'] = acta.firmaUrl.toString();
 
     MapOfValue['mastilEquipo'] = acta.mastilEquipo?.toCapitalized();
-
 
     MapOfValue['horometroActual'] = acta.horometroActual.toString();
     MapOfValue['tipo'] = acta.tipo == "acta_equipo" ? true : false;
@@ -440,8 +437,7 @@ class ActaState extends ChangeNotifier {
           },
           {
             '': [false, false, false],
-            'Desplazador lateral':
-                convertStringToBool(acta.desplazadorLateral),
+            'Desplazador lateral': convertStringToBool(acta.desplazadorLateral),
             'Direccion': convertStringToBool(acta.direccion),
             'Freno mano': convertStringToBool(acta.frenoMano),
             'Freno pie': convertStringToBool(acta.frenoPie),
@@ -575,8 +571,7 @@ class ActaState extends ChangeNotifier {
           },
           {
             '': [false, false, false],
-            'Desplazador lateral':
-                convertStringToBool(acta.desplazadorLateral),
+            'Desplazador lateral': convertStringToBool(acta.desplazadorLateral),
             'Direccion': convertStringToBool(acta.direccion),
             'Freno mano': convertStringToBool(acta.frenoMano),
             'Freno pie': convertStringToBool(acta.frenoPie),
@@ -983,7 +978,7 @@ class ActaState extends ChangeNotifier {
   }
 
   List<bool> convertStringToBool(String? param) {
-    if(param == null){
+    if (param == null) {
       return [false, false, false];
     }
     if (param == 'bueno') {
@@ -993,6 +988,5 @@ class ActaState extends ChangeNotifier {
     } else {
       return [false, false, true];
     }
-
   }
 }

@@ -1,30 +1,28 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:app_licman/model/state/equipoState.dart';
-import 'package:app_licman/ui/ui_acta/acta_only_view_page.dart';
-import 'package:app_licman/ui/ui_creacion_acta/acta_page_view.dart';
+import 'package:app_licman/model/state/app_state.dart';
+import 'package:app_licman/ui/responsive_layout.dart';
+
+import 'package:app_licman/ui/view_acta_page/acta_only_view_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../const/Colors.dart';
 import '../model/cola.dart';
 import '../model/inspeccion.dart';
-import '../model/state/actaState.dart';
-import '../model/state/commonVarState.dart';
+import '../model/state/acta_state.dart';
+import '../model/state/common_var_state.dart';
 import '../services/generate_image_url.dart';
-import 'package:http/http.dart' as http;
-
-import '../services/hive_services.dart';
 import '../services/inspeccion_services.dart';
+import 'create_acta_pages/acta_page_view.dart';
+import 'create_acta_pages/dispatcher_acta_pages.dart';
 
 class ColaActaPage extends StatefulWidget {
-  ColaActaPage({Key? key}) : super(key: key);
+  const ColaActaPage({Key? key}) : super(key: key);
 
   @override
   State<ColaActaPage> createState() => _ColaActaPageState();
@@ -41,7 +39,8 @@ class _ColaActaPageState extends State<ColaActaPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Cola> listaCola = Provider.of<EquipoState>(context).listCola;
+    List<Cola> listaCola = Provider.of<AppState>(context).listCola;
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
         appBar: AppBar(
@@ -66,21 +65,19 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                List<Cola> colas = Provider.of<EquipoState>(
+                                List<Cola> colas = Provider.of<AppState>(
                                         context,
                                         listen: false)
                                     .listCola;
                                 List<Cola> toRemove = [];
                                 if (colas.length > 0) {
-                                  print("cola ${colas.length}");
                                   for (int i = 0; i < colas.length; i++) {
                                     Cola cola = colas[i];
                                     try {
                                       bool resultx =
                                           await enviarActa(cola, context, i);
-                                      print("i ${i} result ${resultx}");
+
                                       if (resultx) {
-                                        print("result ok ${i}");
                                         toRemove.add(cola);
                                       }
                                     } catch (e) {
@@ -88,10 +85,12 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                     }
                                   }
                                 }
-                                if(toRemove.length>0){
-                                  for(int i=0;i<toRemove.length;i++){
+                                if (toRemove.length > 0) {
+                                  for (int i = 0; i < toRemove.length; i++) {
                                     Cola colaDelete = toRemove[i];
-                                    Provider.of<EquipoState>(context, listen: false).removeCola(colaDelete);
+                                    Provider.of<AppState>(context,
+                                            listen: false)
+                                        .removeCola(colaDelete);
                                     colaDelete.delete();
                                   }
                                 }
@@ -115,102 +114,113 @@ class _ColaActaPageState extends State<ColaActaPage> {
                       ),
                     ),
                     Container(
-                      color: Colors.white,
                       width: double.infinity,
-                      child: DataTable(
-                        dataRowHeight: 70,
-                        showBottomBorder: true,
-                        sortColumnIndex: 0,
-                        sortAscending: false,
-                        headingRowColor:
-                            MaterialStateColor.resolveWith((states) => dark),
-                        rows: [
-                          for (int i = 0; i < listaCola.length; i++)
-                            DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text(
-                                  listaCola[i].acta!.idEquipo.toString(),
-                                  style: TextStyle(fontSize: fontSizeRow),
-                                )),
-                                DataCell(Text(listaCola[i].ts,
-                                    style: TextStyle(fontSize: fontSizeRow))),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.visibility),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ActaOnlyView(
-                                                        inspeccion:
-                                                            listaCola[i].acta!,
-                                                        data: listaCola[i]
-                                                                    .data ==
-                                                                null
-                                                            ? null
-                                                            : listaCola[i].data,
-                                                      )));
-                                        },
-                                      ),
-                                      IconButton(
-                                          onPressed: () {
-                                            Inspeccion acta =
-                                                listaCola[i].acta!;
-                                            Provider.of<ActaState>(context,
-                                                    listen: false)
-                                                .convertObjectTostate(
-                                                    acta, context);
-                                            Provider.of<EquipoState>(context,
-                                                    listen: false)
-                                                .setIndexCola(i);
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          constraints: BoxConstraints(minWidth: width),
+                          child: DataTable(
+                            dataRowHeight: 70,
+                            showBottomBorder: true,
+                            sortColumnIndex: 0,
+                            sortAscending: false,
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => dark),
+                            rows: [
+                              for (int i = 0; i < listaCola.length; i++)
+                                DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(Text(
+                                      listaCola[i].acta!.idEquipo.toString(),
+                                      style: TextStyle(fontSize: fontSizeRow),
+                                    )),
+                                    DataCell(Text(listaCola[i].ts,
+                                        style:
+                                            TextStyle(fontSize: fontSizeRow))),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.visibility),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ActaOnlyView(
+                                                            tipo: getDevice(
+                                                                context),
+                                                            inspeccion:
+                                                                listaCola[i]
+                                                                    .acta!,
+                                                            data: listaCola[i]
+                                                                        .data ==
+                                                                    null
+                                                                ? null
+                                                                : listaCola[i]
+                                                                    .data,
+                                                          )));
+                                            },
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                Inspeccion acta =
+                                                    listaCola[i].acta!;
+                                                Provider.of<ActaState>(context,
+                                                        listen: false)
+                                                    .convertObjectTostate(
+                                                        acta, context);
+                                                Provider.of<AppState>(context,
+                                                        listen: false)
+                                                    .setIndexCola(i);
 
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ActaPageView(
-                                                          edit: true,
-                                                          onlyCacheSave: true,
-                                                          data:
-                                                              listaCola[i].data,
-                                                        )));
-                                          },
-                                          icon: Icon(Icons.edit))
-                                    ],
-                                  ),
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DispatcherActaCreatePages(
+                                                              edit: true,
+                                                              onlyCacheSave:
+                                                                  true,
+                                                              data: listaCola[i]
+                                                                  .data,
+                                                            )));
+                                              },
+                                              icon: Icon(Icons.edit))
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                        ],
-                        columns: [
-                          DataColumn(
-                            label: Text(
-                              'Acta ID',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: fontSizeRowHead),
-                            ),
+                            ],
+                            columns: [
+                              DataColumn(
+                                label: Text(
+                                  'Acta ID',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: fontSizeRowHead),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  'Fecha',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: fontSizeRowHead),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  'Acciones',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: fontSizeRowHead),
+                                ),
+                              ),
+                            ],
                           ),
-                          DataColumn(
-                            label: Text(
-                              'Fecha',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: fontSizeRowHead),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Acciones',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: fontSizeRowHead),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
@@ -265,9 +275,8 @@ class _ColaActaPageState extends State<ColaActaPage> {
     try {
       final result = await sendActa(acta);
       if (result != null) {
-        print("entro cola ${cola.acta?.idInspeccion.toString()}");
-        Provider.of<EquipoState>(context, listen: false).addActa(result);
-        Provider.of<EquipoState>(context, listen: false)
+        Provider.of<AppState>(context, listen: false).addActa(result);
+        Provider.of<AppState>(context, listen: false)
             .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         //Eliminar la cola del provider y despues del cache
