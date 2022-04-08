@@ -2,17 +2,20 @@
 //
 //     final movimiento = movimientoFromJson(jsonString);
 
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 part 'movimiento.g.dart';
 
-List<Movimiento> movimientoFromJson(String str) => List<Movimiento>.from(json.decode(str).map((x) => Movimiento.fromJson(x)));
+List<Movimiento> movimientoFromJson(String str) =>
+    List<Movimiento>.from(json.decode(str).map((x) => Movimiento.fromJson(x)));
 
-String movimientoToJson(List<Movimiento> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String movimientoToJson(List<Movimiento> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 @HiveType(typeId: 5)
-class Movimiento extends HiveObject{
+class Movimiento extends HiveObject with EquatableMixin {
   Movimiento({
     required this.idMovimiento,
     required this.transporte,
@@ -51,32 +54,65 @@ class Movimiento extends HiveObject{
 
   String? equipoId;
   String nombreCliente = "";
+  copyWith(Movimiento movimiento) {
+    idMovimiento = movimiento.idMovimiento;
+    transporte = movimiento.transporte;
+    fechaRetiro = movimiento.fechaRetiro;
+    fechaMov = movimiento.fechaMov;
+    idInspeccion = movimiento.idInspeccion;
+    rut = movimiento.rut;
+    idGuiaDespacho = movimiento.idGuiaDespacho;
+    urlGuiaDespacho = movimiento.urlGuiaDespacho;
+    cambio = movimiento.cambio;
+    tipo = movimiento.tipo;
+    observaciones = movimiento.observaciones;
+  }
 
   factory Movimiento.fromJson(Map<String, dynamic> json) => Movimiento(
-    idMovimiento: json["idMovimiento"],
-    transporte: json["transporte"],
-    fechaRetiro: json['fechaRetiro'] ==null ? null:DateTime.parse(json["fechaRetiro"]),
-    fechaMov: DateTime.parse(json["fechaMov"]),
-    idInspeccion: json["idInspeccion"],
-    rut: json["rut"],
-    idGuiaDespacho: json["idGuiaDespacho"],
-    urlGuiaDespacho: json["urlGuiaDespacho"],
-    cambio: json["cambio"] == null ?  null:json['cambio'],
-    tipo: json["tipo"],
-    observaciones: json["observaciones"],
-  );
+        idMovimiento: json["idMovimiento"],
+        transporte: json["transporte"],
+        fechaRetiro: json['fechaRetiro'] == null
+            ? null
+            : DateTime.parse(json["fechaRetiro"]),
+        fechaMov: DateTime.parse(json["fechaMov"]),
+        idInspeccion: json["idInspeccion"],
+        rut: json["rut"],
+        idGuiaDespacho: json["idGuiaDespacho"],
+        urlGuiaDespacho: json["urlGuiaDespacho"],
+        cambio: json["cambio"] == null ? null : json['cambio'],
+        tipo: json["tipo"],
+        observaciones: json["observaciones"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "idMovimiento": idMovimiento,
-    "transporte": transporte,
-    "fechaRetiro": fechaRetiro?.toIso8601String(),
-    "fechaMov": fechaMov.toIso8601String(),
-    "idInspeccion": idInspeccion,
-    "rut": rut,
-    "idGuiaDespacho": idGuiaDespacho,
-    "urlGuiaDespacho": urlGuiaDespacho,
-    "cambio": cambio,
-    "tipo": tipo,
-    "observaciones": observaciones,
-  };
+        "idMovimiento": idMovimiento,
+        "transporte": transporte,
+        "fechaRetiro": fechaRetiro?.toIso8601String(),
+        "fechaMov": fechaMov.toIso8601String(),
+        "idInspeccion": idInspeccion,
+        "rut": rut,
+        "idGuiaDespacho": idGuiaDespacho,
+        "urlGuiaDespacho": urlGuiaDespacho,
+        "cambio": cambio,
+        "tipo": tipo,
+        "observaciones": observaciones,
+      };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props {
+    return [
+      idMovimiento,
+      transporte,
+      fechaRetiro,
+      fechaMov,
+      idInspeccion,
+      rut,
+      idGuiaDespacho,
+      urlGuiaDespacho,
+      cambio,
+      tipo,
+      observaciones,
+    ];
+  }
 }

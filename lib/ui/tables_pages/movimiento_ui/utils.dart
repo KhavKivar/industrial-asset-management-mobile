@@ -140,21 +140,35 @@ class _FilterPanelWidgetState extends State<FilterPanelMovimientoWidget> {
                           width: 30,
                         ),
                         Flexible(
-                          child: Container(
-                            constraints: BoxConstraints(maxWidth: 400),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  widget.DateController.selectedDate = null;
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "Seleccionar todo",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 30.sp,
-                                  ),
-                                )),
-                          ),
+                          child: LayoutBuilder(builder: (context, dimens) {
+                            return dimens.maxWidth < 150
+                                ? IconButton(
+                                    onPressed: () {
+                                      widget.DateController.selectedDate = null;
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(
+                                      Icons.date_range_sharp,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  )
+                                : Container(
+                                    constraints: BoxConstraints(maxWidth: 250),
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          widget.DateController.selectedDate =
+                                              null;
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Seleccionar todo",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 30.sp,
+                                          ),
+                                        )),
+                                  );
+                          }),
                         )
                       ],
                     ),

@@ -26,6 +26,7 @@ class UpdateStateRepository {
     UpdateTime cacheMovimientos =
         await (hiveService.getBox('cache_time_movimiento'));
     UpdateTime cacheClientes = await (hiveService.getBox('cache_time_cliente'));
+
     List<UpdateTime> realUpdateList = await getLastUpdate();
     dynamic contextMain =
         Provider.of<AppState>(context, listen: false).contextMain;
@@ -51,7 +52,6 @@ class UpdateStateRepository {
             .setInspeccion(listaActualizada);
         Provider.of<AppState>(contextMain, listen: false)
             .setFilterList(listaActualizada);
-        print("finish");
       }
       //Actualizar el cache de modeloImagen
 
@@ -104,6 +104,7 @@ class UpdateStateRepository {
             .setClientes(listaActualizada);
       }
     }
+    print("FINISH TO UPDATE REPOSITORY");
     return true;
   }
 }

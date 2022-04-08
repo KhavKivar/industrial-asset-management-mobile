@@ -57,8 +57,6 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
     penStrokeWidth: 2,
     penColor: Colors.black,
     exportBackgroundColor: Colors.white,
-    onDrawStart: () => print('onDrawStart called!'),
-    onDrawEnd: () => print('onDrawEnd called!'),
   );
   bool activar = false;
   bool isLoading = false;

@@ -72,7 +72,7 @@ class _ActaTableState extends State<ActaTable>
           .toList();
       Provider.of<AppState>(context, listen: false).setFilterList(resultado);
     });
-    print("init state");
+
     super.initState();
   }
 
@@ -112,6 +112,7 @@ class _ActaTableState extends State<ActaTable>
                       suffixIcon: IconButton(
                           focusNode: FocusNode(skipTraversal: true),
                           onPressed: () {
+                        
                             setState(() {
                               showFilter = !showFilter;
                             });
@@ -187,12 +188,9 @@ class _ActaTableState extends State<ActaTable>
                                                     filterList[rowIndex])))
                                 .then((value) {
                               if (widget.device == 'mobile' ||
-                                  widget.device == 'tablet') {
-                                if (widget.actaFocusController.hasFocus) {
-                                  print("hasfocus");
-                                  widget.actaFocusController.unfocus();
-                                }
-                              }
+                                  widget.device == 'tablet')
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                             });
                           },
                           child: Container(
@@ -222,6 +220,10 @@ class _ActaTableState extends State<ActaTable>
                                 .then((value) {
                               Provider.of<CommonState>(context, listen: false)
                                   .changeActaIndex(0);
+                              if (widget.device == 'mobile' ||
+                                  widget.device == 'tablet')
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                             });
                           },
                           child: Container(

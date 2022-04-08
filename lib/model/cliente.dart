@@ -2,18 +2,20 @@
 //
 //     final cliente = clienteFromJson(jsonString);
 
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 part 'cliente.g.dart';
 
-List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str).map((x) => Cliente.fromJson(x)));
+List<Cliente> clienteFromJson(String str) =>
+    List<Cliente>.from(json.decode(str).map((x) => Cliente.fromJson(x)));
 
-String clienteToJson(List<Cliente> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
+String clienteToJson(List<Cliente> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 @HiveType(typeId: 10)
-class Cliente extends HiveObject {
+class Cliente extends HiveObject with EquatableMixin {
   Cliente({
     required this.rut,
     required this.nombre,
@@ -27,14 +29,25 @@ class Cliente extends HiveObject {
   String telefono;
 
   factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
-    rut: json["rut"],
-    nombre: json["nombre"],
-    telefono: json["telefono"],
-  );
+        rut: json["rut"],
+        nombre: json["nombre"],
+        telefono: json["telefono"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "rut": rut,
-    "nombre": nombre,
-    "telefono": telefono,
-  };
+        "rut": rut,
+        "nombre": nombre,
+        "telefono": telefono,
+      };
+  copyWith(Cliente cliente) {
+    rut = cliente.rut;
+    nombre = cliente.nombre;
+    telefono = cliente.telefono;
+  }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props {
+    return [rut, nombre, telefono];
+  }
 }

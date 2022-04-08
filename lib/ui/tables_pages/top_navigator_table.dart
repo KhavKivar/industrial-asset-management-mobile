@@ -66,6 +66,9 @@ class _TableOfActasState extends State<TableOfActas> {
 
   changeSelectItem(int nt) {
     Provider.of<CommonState>(context, listen: false).setTabSelect(nt);
+    if (widget.device == 'mobile' || widget.device == 'tablet') {
+      return;
+    }
 
     if (nt == 0) {
       actaFocus.requestFocus();
@@ -183,26 +186,46 @@ class _TableOfActasState extends State<TableOfActas> {
             ClosePageIntent: ClosePageAction(context, changeItemSelectOnBar)
           },
           child: SafeArea(
-            child: FocusScope(
-              autofocus: widget.device == 'desktop' ? true : false,
-              child: Builder(builder: (BuildContext context) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
+            child: Builder(builder: (BuildContext context) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  if (widget.device.toString() != 'mobile')
+                    _NavigatorTwoItem(
+                      controller: controller,
+                      select: select,
                     ),
-                    if (widget.device.toString() != 'mobile')
-                      _NavigatorTwoItem(
-                        controller: controller,
-                        select: select,
-                      ),
-                    Expanded(
-                      child: PageView(
-                        controller: controller,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          Shortcuts(
+                  Expanded(
+                    child: PageView(
+                      controller: controller,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        Shortcuts(
+                          manager: LoggingShortcutManager(),
+                          shortcuts: <LogicalKeySet, Intent>{
+                            LogicalKeySet(LogicalKeyboardKey.arrowUp):
+                                const UpIntent(),
+                            LogicalKeySet(LogicalKeyboardKey.arrowDown):
+                                const DownIntent(),
+                          },
+                          child: Actions(
+                            dispatcher: LoggingActionDispatcher(),
+                            actions: {
+                              DownIntent: DownAction(dataGridControllerActa),
+                              UpIntent: UpAction(dataGridControllerActa),
+                            },
+                            child: ActaTable(
+                                provSelectState: provSelectState,
+                                width: width,
+                                dataGridController: dataGridControllerActa,
+                                actaFocusController: actaFocus,
+                                device: widget.device),
+                          ),
+                        ),
+                        Shortcuts(
                             manager: LoggingShortcutManager(),
                             shortcuts: <LogicalKeySet, Intent>{
                               LogicalKeySet(LogicalKeyboardKey.arrowUp):
@@ -211,50 +234,27 @@ class _TableOfActasState extends State<TableOfActas> {
                                   const DownIntent(),
                             },
                             child: Actions(
-                              dispatcher: LoggingActionDispatcher(),
-                              actions: {
-                                DownIntent: DownAction(dataGridControllerActa),
-                                UpIntent: UpAction(dataGridControllerActa),
-                              },
-                              child: ActaTable(
-                                  provSelectState: provSelectState,
-                                  width: width,
-                                  dataGridController: dataGridControllerActa,
-                                  actaFocusController: actaFocus,
-                                  device: widget.device),
-                            ),
-                          ),
-                          Shortcuts(
-                              manager: LoggingShortcutManager(),
-                              shortcuts: <LogicalKeySet, Intent>{
-                                LogicalKeySet(LogicalKeyboardKey.arrowUp):
-                                    const UpIntent(),
-                                LogicalKeySet(LogicalKeyboardKey.arrowDown):
-                                    const DownIntent(),
-                              },
-                              child: Actions(
-                                  dispatcher: LoggingActionDispatcher(),
-                                  actions: {
-                                    DownIntent: DownAction(
-                                        dataGridControllerMovimiento),
-                                    UpIntent:
-                                        UpAction(dataGridControllerMovimiento),
-                                  },
-                                  child: MovTable(
-                                      focus: movFocus,
-                                      dataGridController:
-                                          dataGridControllerMovimiento,
-                                      device: widget.device.toString())))
-                        ],
-                      ),
+                                dispatcher: LoggingActionDispatcher(),
+                                actions: {
+                                  DownIntent:
+                                      DownAction(dataGridControllerMovimiento),
+                                  UpIntent:
+                                      UpAction(dataGridControllerMovimiento),
+                                },
+                                child: MovTable(
+                                    focus: movFocus,
+                                    dataGridController:
+                                        dataGridControllerMovimiento,
+                                    device: widget.device.toString())))
+                      ],
                     ),
-                    SizedBox(
-                      height: widget.device == 'mobile' ? 10 : 20,
-                    )
-                  ],
-                );
-              }),
-            ),
+                  ),
+                  SizedBox(
+                    height: widget.device == 'mobile' ? 10 : 20,
+                  )
+                ],
+              );
+            }),
           ),
         ),
       ),

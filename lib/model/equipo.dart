@@ -2,32 +2,33 @@
 //
 //     final welcome = welcomeFromJson(jsonString);
 
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'dart:convert';
 part 'equipo.g.dart';
 
-List<Equipo> welcomeFromJson(String str) => List<Equipo>.from(json.decode(str).map((x) => Equipo.fromJson(x)));
+List<Equipo> welcomeFromJson(String str) =>
+    List<Equipo>.from(json.decode(str).map((x) => Equipo.fromJson(x)));
 
-String welcomeToJson(List<Equipo> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
+String welcomeToJson(List<Equipo> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 @HiveType(typeId: 0)
-class Equipo extends HiveObject{
-  Equipo({
-    required this.id,
-    required this.tipo,
-    required this.marca,
-    required this.modelo,
-    required this.serie,
-    required this.capacidad,
-    required this.mastil,
-    required this.altura,
-    required this.ano,
-    required this.horometro,
-    required this.precioNeto,
-    required this.estado,
-    required this.ubicacion
-  });
+class Equipo extends HiveObject with EquatableMixin {
+  Equipo(
+      {required this.id,
+      required this.tipo,
+      required this.marca,
+      required this.modelo,
+      required this.serie,
+      required this.capacidad,
+      required this.mastil,
+      required this.altura,
+      required this.ano,
+      required this.horometro,
+      required this.precioNeto,
+      required this.estado,
+      required this.ubicacion});
 
   @HiveField(0)
   int id;
@@ -59,7 +60,6 @@ class Equipo extends HiveObject{
   @HiveField(9)
   double horometro;
 
-
   @HiveField(10)
   String estado;
 
@@ -69,37 +69,71 @@ class Equipo extends HiveObject{
   @HiveField(12)
   int precioNeto;
 
-
   factory Equipo.fromJson(Map<String, dynamic> json) => Equipo(
-    id: json["idEquipo"],
-    tipo: json["tipo"],
-    marca: json["marca"],
-    modelo: json["modelo"],
-    serie: json["serie"],
-    capacidad: json["capacidad"],
-    mastil: json["mastil"] == null ?  "":json["mastil"] ,
-    altura:  json["altura"] == null ? 0.0 : json["altura"].toDouble(),
-    ano: json["ano"],
-    horometro: json["horometro"] == null ? 0.0 : json["horometro"].toDouble(),
-    estado: json['estado'],
-    ubicacion: json['ubicacion'],
-    precioNeto: json["precio_neto"],
-
-  );
+        id: json["idEquipo"],
+        tipo: json["tipo"],
+        marca: json["marca"],
+        modelo: json["modelo"],
+        serie: json["serie"],
+        capacidad: json["capacidad"],
+        mastil: json["mastil"] == null ? "" : json["mastil"],
+        altura: json["altura"] == null ? 0.0 : json["altura"].toDouble(),
+        ano: json["ano"],
+        horometro:
+            json["horometro"] == null ? 0.0 : json["horometro"].toDouble(),
+        estado: json['estado'],
+        ubicacion: json['ubicacion'],
+        precioNeto: json["precio_neto"],
+      );
+  copyWith(Equipo equipo) {
+    id = equipo.id;
+    tipo = equipo.tipo;
+    marca = equipo.marca;
+    modelo = equipo.modelo;
+    serie = equipo.serie;
+    capacidad = equipo.capacidad;
+    mastil = equipo.mastil;
+    altura = equipo.altura;
+    ano = equipo.ano;
+    horometro = equipo.horometro;
+    estado = equipo.estado;
+    ubicacion = equipo.ubicacion;
+    precioNeto = equipo.precioNeto;
+  }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "tipo": tipo,
-    "marca": marca,
-    "modelo": modelo,
-    "serie": serie,
-    "capacidad": capacidad,
-    "mastil": mastil,
-    "altura": altura,
-    "ano": ano,
-    "horometro": horometro,
-     "estado":estado,
-    "ubicacion":ubicacion,
-    "precio_neto": precioNeto,
-  };
+        "id": id,
+        "tipo": tipo,
+        "marca": marca,
+        "modelo": modelo,
+        "serie": serie,
+        "capacidad": capacidad,
+        "mastil": mastil,
+        "altura": altura,
+        "ano": ano,
+        "horometro": horometro,
+        "estado": estado,
+        "ubicacion": ubicacion,
+        "precio_neto": precioNeto,
+      };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props {
+    return [
+      id,
+      tipo,
+      marca,
+      modelo,
+      serie,
+      capacidad,
+      mastil,
+      altura,
+      ano,
+      horometro,
+      estado,
+      ubicacion,
+      precioNeto
+    ];
+  }
 }

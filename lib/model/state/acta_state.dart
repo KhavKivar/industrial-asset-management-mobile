@@ -71,8 +71,6 @@ class ActaState extends ChangeNotifier {
     acta.alturaLevante = MapOfValue['alturaLevante'];
     acta.horometroActual = double.parse(MapOfValue['horometroActual']);
 
-    print("value ${MapOfValue['mastilEquipo']}");
-
     acta.mastilEquipo = MapOfValue['mastilEquipo'] == 'Simple'
         ? "SIMPLE"
         : MapOfValue['mastilEquipo'] == 'Doble'
@@ -85,9 +83,6 @@ class ActaState extends ChangeNotifier {
 
     acta.alarmaRetroceso = convertBoolToString(
         MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']);
-
-    print(
-        "alarma retroceso ${MapOfValue['ACTA']['SELECT_CAMP'][0]['Alarma retroceso']}");
 
     acta.extintor =
         convertBoolToString(MapOfValue['ACTA']['SELECT_CAMP'][0]['Extintor']);

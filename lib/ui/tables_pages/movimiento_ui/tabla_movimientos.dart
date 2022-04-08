@@ -207,12 +207,18 @@ class _MovTableState extends State<MovTable>
                                         .idInspeccion);
                             if (indexActa != -1) {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          DispatcherActaOnlyView(
-                                              inspeccion:
-                                                  inspecciones[indexActa])));
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DispatcherActaOnlyView(
+                                                  inspeccion:
+                                                      inspecciones[indexActa])))
+                                  .then((value) {
+                                if (widget.device == 'mobile' ||
+                                    widget.device == 'tablet')
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                              });
                             }
                           },
                           child: Container(

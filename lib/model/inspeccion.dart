@@ -468,6 +468,94 @@ class Inspeccion extends HiveObject with EquatableMixin {
         "nombre": nombre,
       };
 
+  copyWith(Inspeccion inspeccionToCopy) {
+    idInspeccion = inspeccionToCopy.idInspeccion;
+    alarmaRetroceso = inspeccionToCopy.alarmaRetroceso;
+    asientoOperador = inspeccionToCopy.asientoOperador;
+    baliza = inspeccionToCopy.baliza;
+    idEquipo = inspeccionToCopy.idEquipo;
+    bocina = inspeccionToCopy.bocina;
+    extintor = inspeccionToCopy.extintor;
+    espejos = inspeccionToCopy.espejos;
+    cantidadEspejos = inspeccionToCopy.cantidadEspejos;
+    focosFaenerosDelanteros = inspeccionToCopy.focosFaenerosDelanteros;
+    cantidadFocosFaenerosDelanteros =
+        inspeccionToCopy.cantidadFocosFaenerosDelanteros;
+    focosFaenerosTraseros = inspeccionToCopy.focosFaenerosTraseros;
+    cantidadFocosFaenerosTraseros =
+        inspeccionToCopy.cantidadFocosFaenerosTraseros;
+    llaveContacto = inspeccionToCopy.llaveContacto;
+    cantidadLlaveContacto = inspeccionToCopy.cantidadLlaveContacto;
+    intermitentesDelanteros = inspeccionToCopy.intermitentesDelanteros;
+    cantidadIntermitentesDelanteros =
+        inspeccionToCopy.cantidadIntermitentesDelanteros;
+    intermitentesTraseros = inspeccionToCopy.intermitentesTraseros;
+    cantidadIntermitentesTraseros =
+        inspeccionToCopy.cantidadIntermitentesTraseros;
+    palancaFrenoMano = inspeccionToCopy.palancaFrenoMano;
+    peraVolante = inspeccionToCopy.peraVolante;
+    arnesCilindroGas = inspeccionToCopy.arnesCilindroGas;
+    tableroIntrumentos = inspeccionToCopy.tableroIntrumentos;
+    cilindroDesplazador = inspeccionToCopy.cilindroDesplazador;
+    cilindroDireccion = inspeccionToCopy.cilindroDireccion;
+    cilindroLevanteCentral = inspeccionToCopy.cilindroLevanteCentral;
+    cilindroInclinacion = inspeccionToCopy.cilindroInclinacion;
+    cilindroLevanteLateral = inspeccionToCopy.cilindroLevanteCentral;
+    flexibleHidraulico = inspeccionToCopy.flexibleHidraulico;
+    fugaConectores = inspeccionToCopy.fugaConectores;
+    alternador = inspeccionToCopy.alternador;
+    bateria = inspeccionToCopy.bateria;
+    chapaContacto = inspeccionToCopy.chapaContacto;
+    sistemaElectrico = inspeccionToCopy.sistemaElectrico;
+    horometro = inspeccionToCopy.horometro;
+    motorPartida = inspeccionToCopy.motorPartida;
+    palancaComando = inspeccionToCopy.palancaComando;
+    switchLuces = inspeccionToCopy.switchLuces;
+    switchMarcha = inspeccionToCopy.switchMarcha;
+    cadena = inspeccionToCopy.cadena;
+    carro = inspeccionToCopy.carro;
+    horquilla = inspeccionToCopy.horquilla;
+    jaula = inspeccionToCopy.jaula;
+    llantas = inspeccionToCopy.llantas;
+    mastil = inspeccionToCopy.mastil;
+    pintura = inspeccionToCopy.pintura;
+    rueda = inspeccionToCopy.rueda;
+    cantidadRueda = inspeccionToCopy.cantidadRueda;
+    desplazadorLateral = inspeccionToCopy.desplazadorLateral;
+    direccion = inspeccionToCopy.direccion;
+    frenoMano = inspeccionToCopy.frenoMano;
+    frenoPie = inspeccionToCopy.frenoPie;
+    inclinacion = inspeccionToCopy.inclinacion;
+    levante = inspeccionToCopy.levante;
+    motor = inspeccionToCopy.motor;
+    nivelAceiteHidraulico = inspeccionToCopy.nivelAceiteHidraulico;
+    nivelAceiteMotor = inspeccionToCopy.nivelAceiteMotor;
+    nivelAceiteTransmision = inspeccionToCopy.nivelAceiteTransmision;
+    nivelLiquinoFreno = inspeccionToCopy.nivelLiquinoFreno;
+    tapaCombustible = inspeccionToCopy.tapaCombustible;
+    tapaRadiador = inspeccionToCopy.tapaRadiador;
+    transmision = inspeccionToCopy.transmision;
+    observacion = inspeccionToCopy.observacion;
+    firmaUrl = inspeccionToCopy.firmaUrl;
+    rut = inspeccionToCopy.rut;
+    nombre = inspeccionToCopy.nombre;
+    tipo = inspeccionToCopy.tipo;
+    joystick = inspeccionToCopy.joystick;
+    serieCargador = inspeccionToCopy.serieCargador;
+    cargadorVoltaje = inspeccionToCopy.cargadorVoltaje;
+    enchufe = inspeccionToCopy.enchufe;
+    alturaLevante = inspeccionToCopy.alturaLevante;
+    carga = inspeccionToCopy.carga;
+    cilindroDeGas = inspeccionToCopy.cilindroDeGas;
+    bateriaObservaciones = inspeccionToCopy.bateriaObservaciones;
+    serieCargardorText = inspeccionToCopy.serieCargardorText;
+    cargadorVoltajeInfo = inspeccionToCopy.cargadorVoltajeInfo;
+    enchufeInfo = inspeccionToCopy.enchufeInfo;
+    horometroActual = inspeccionToCopy.horometroActual;
+    mastilEquipo = inspeccionToCopy.mastilEquipo;
+    ts = inspeccionToCopy.ts;
+  }
+
   @override
   // TODO: implement props
   List<Object?> get props {

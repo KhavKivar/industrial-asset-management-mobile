@@ -176,15 +176,17 @@ class _MobileRegisterPageState extends State<MobileRegisterPage> {
   var selectPage = 0;
 
   changeHoverList(int pos, int ix) {
-    setState(() {
-      hoverList[pos][ix] = true;
-    });
-
-    Future.delayed(Duration(milliseconds: 1000), () {
+    if (ix > 0) {
       setState(() {
-        hoverList[pos][ix] = false;
+        hoverList[pos][ix] = true;
       });
-    });
+
+      Future.delayed(Duration(milliseconds: 1000), () {
+        setState(() {
+          hoverList[pos][ix] = false;
+        });
+      });
+    }
   }
 
   @override

@@ -72,7 +72,6 @@ class HomepageState extends State<Homepage> {
 
     var orientation = MediaQuery.of(context).orientation;
 
-    print("build ${equipos.length}");
     ScreenUtil.init(
         BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width,
