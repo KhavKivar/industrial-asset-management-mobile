@@ -431,9 +431,9 @@ class _actaGeneralPartTwoMobileState extends State<actaGeneralPartTwoMobile>
         });
         await Future.delayed(Duration(seconds: 1));
 
-        Provider.of<AppState>(context, listen: false).setActa(result);
-        Provider.of<AppState>(context, listen: false)
-            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        // Provider.of<AppState>(context, listen: false).setActa(result);
+        // Provider.of<AppState>(context, listen: false)
+        //     .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
@@ -487,9 +487,10 @@ class _actaGeneralPartTwoMobileState extends State<actaGeneralPartTwoMobile>
           buttonState = ButtonState.done;
         });
         await Future.delayed(Duration(seconds: 1));
-        Provider.of<AppState>(context, listen: false).addActa(result);
-        Provider.of<AppState>(context, listen: false)
-            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        // Provider.of<AppState>(context, listen: false).addActa(result);
+        // Provider.of<AppState>(context, listen: false)
+        //     .setHorometro(acta.idEquipo!, acta.horometroActual!);
+
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
@@ -502,7 +503,7 @@ class _actaGeneralPartTwoMobileState extends State<actaGeneralPartTwoMobile>
         showError = true;
         message = e.toString();
       });
-    } catch (e) {
+
       setState(() {
         buttonState = ButtonState.init;
         showError = true;
@@ -514,7 +515,7 @@ class _actaGeneralPartTwoMobileState extends State<actaGeneralPartTwoMobile>
 
   Future<void> enviarActaOffline() async {
     final Uint8List? data = await _controller.toPngBytes();
-    var box = await Hive.openBox('cola');
+    var box = await Hive.openBox<Cola>('cola');
     Inspeccion acta =
         Provider.of<ActaState>(context, listen: false).convertMapToObject("");
 
@@ -531,8 +532,10 @@ class _actaGeneralPartTwoMobileState extends State<actaGeneralPartTwoMobile>
             color: Colors.red,
           ),
           const SizedBox(width: 5),
-          Text('Sin conexion a internet, se envio a la cola de actas',
-              style: TextStyle(fontSize: 18)),
+          Expanded(
+            child: Text('Sin conexion a internet, se envio a la cola de actas',
+                style: TextStyle(fontSize: 18)),
+          ),
         ],
       ),
     ));

@@ -549,11 +549,11 @@ class _FirmaAndObservacionesWidget extends StatelessWidget {
                 ),
                 _RowWidgetObvAndDetails(
                   stringFinal: inspeccion.rut!,
-                  stringInitial: 'Rut Cliente',
+                  stringInitial: 'Rut recepcionista',
                 ),
                 _RowWidgetObvAndDetails(
                   stringFinal: inspeccion.nombre!,
-                  stringInitial: 'Nombre Cliente',
+                  stringInitial: 'Nombre recepcionista',
                 ),
                 _RowWidgetObvAndDetails(
                   stringFinal: inspeccion.observacion!,

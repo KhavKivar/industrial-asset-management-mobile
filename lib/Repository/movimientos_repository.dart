@@ -8,34 +8,50 @@ import '../services/util.dart';
 
 class MovimientoRepository {
   final HiveService hiveService = HiveService();
+  String boxName = "MOVIMIENTOS";
+  String boxChacheName = "cache_time_movimiento";
+
+  delete(int id) async {
+    hiveService.deleteObject<Movimiento>(id, boxName);
+  }
+
+  edit(Movimiento movimiento) async {
+    hiveService.editObject<Movimiento>(movimiento, boxName);
+  }
+
+  save(Movimiento movimiento) {
+    hiveService.addOneBox<Movimiento>(movimiento, boxName);
+  }
+
   Future<List<Movimiento>> get(bool forceUpdate) async {
-    bool exists = await hiveService.isExists(boxName: "MOVIMIENTOS");
+    bool exists = await hiveService.isExists<Movimiento>(boxName: boxName);
     List<Movimiento> movimientos = [];
     if (exists && !forceUpdate) {
       print("Cache movimientos");
-      var eq = await (hiveService.getBoxes('MOVIMIENTOS'));
-      return List<Movimiento>.from(eq);
+      List<Movimiento> movimientos =
+          await hiveService.getBoxes<Movimiento>(boxName);
+      return movimientos;
     } else {
       movimientos = await getMovimientos();
-      print("get movimientos");
       if (exists) {
-        updateCachUltraFast<Movimiento>('MOVIMIENTOS', movimientos);
+        updateCacheUltraFast<Movimiento>(boxName, movimientos);
       } else {
-        print("SIN CACHE ${movimientos.length}");
-        await hiveService.addBoxes(movimientos, "MOVIMIENTOS");
+        await hiveService.addBoxes<Movimiento>(movimientos, boxName);
       }
       bool cacheExist =
-          await hiveService.isExists(boxName: "cache_time_movimiento");
+          await hiveService.isExists<UpdateTime>(boxName: boxChacheName);
       List<UpdateTime> updateList = await getLastUpdate();
-      if (cacheExist) {
-        UpdateTime movCache = await hiveService.getBox("cache_time_movimiento");
 
-        movCache.updateTime = updateList[3].updateTime;
-        movCache.save();
-      } else {
-        UpdateTime timeEq = updateList[3];
-
-        await hiveService.addOneBox(timeEq, "cache_time_movimiento");
+      if (updateList.isNotEmpty) {
+        if (cacheExist) {
+          UpdateTime movCache =
+              await hiveService.getBox<UpdateTime>(boxChacheName);
+          movCache.updateTime = updateList[3].updateTime;
+          movCache.save();
+        } else {
+          UpdateTime timeEq = updateList[3];
+          await hiveService.addOneBox<UpdateTime>(timeEq, boxChacheName);
+        }
       }
     }
     return movimientos;

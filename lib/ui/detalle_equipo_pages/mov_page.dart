@@ -46,6 +46,11 @@ class MovEquipoPage extends StatelessWidget {
           child: SfDataGrid(
             allowSwiping: true,
             swipeMaxOffset: 130,
+            onQueryRowHeight: (details) {
+              // Set the row height as 70.0 to the column header row.
+
+              return details.getIntrinsicRowHeight(details.rowIndex);
+            },
             startSwipeActionsBuilder:
                 (BuildContext context, DataGridRow row, int rowIndex) {
               return GestureDetector(
@@ -127,7 +132,9 @@ class MovimientoDataSourceDetalle extends DataGridSource {
       return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         return Container(
-          padding: EdgeInsets.all(8.0),
+          padding: e.columnName == 'Empresa'
+              ? EdgeInsets.all(3.0)
+              : EdgeInsets.all(8.0),
           child: Align(
             alignment: e.columnName == 'Observaciones'
                 ? Alignment.topLeft

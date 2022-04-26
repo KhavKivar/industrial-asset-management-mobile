@@ -398,9 +398,11 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
                         }
                         cola.acta = acta;
                         cola.save();
+
                         await Future.delayed(Duration(milliseconds: 500));
                         _btnController1.success();
                         await Future.delayed(Duration(seconds: 1));
+                        Provider.of<ActaState>(context, listen: false).reset();
                         Navigator.pop(context);
                       },
                       controller: _btnController1,
@@ -526,9 +528,9 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
         });
         await Future.delayed(Duration(seconds: 1));
 
-        Provider.of<AppState>(context, listen: false).setActa(result);
-        Provider.of<AppState>(context, listen: false)
-            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        // Provider.of<AppState>(context, listen: false).setActa(result);
+        // Provider.of<AppState>(context, listen: false)
+        //     .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
@@ -582,9 +584,9 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
           buttonState = ButtonState.done;
         });
         await Future.delayed(Duration(seconds: 1));
-        Provider.of<AppState>(context, listen: false).addActa(result);
-        Provider.of<AppState>(context, listen: false)
-            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        // Provider.of<AppState>(context, listen: false).addActa(result);
+        // Provider.of<AppState>(context, listen: false)
+        //     .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         Provider.of<ActaState>(context, listen: false).reset();
         Navigator.pop(context);
@@ -609,7 +611,7 @@ class _actaGeneralPartTwoState extends State<actaGeneralPartTwo>
 
   Future<void> enviarActaOffline() async {
     final Uint8List? data = await _controller.toPngBytes();
-    var box = await Hive.openBox('cola');
+    var box = await Hive.openBox<Cola>('cola');
     Inspeccion acta =
         Provider.of<ActaState>(context, listen: false).convertMapToObject("");
 

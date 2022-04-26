@@ -2,11 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:app_licman/model/state/app_state.dart';
+import 'package:app_licman/services/hive_services.dart';
 import 'package:app_licman/ui/responsive_layout.dart';
 
 import 'package:app_licman/ui/view_acta_page/acta_only_view_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -91,7 +93,7 @@ class _ColaActaPageState extends State<ColaActaPage> {
                                     Provider.of<AppState>(context,
                                             listen: false)
                                         .removeCola(colaDelete);
-                                    colaDelete.delete();
+                                    removeColaFromCache(colaDelete);
                                   }
                                 }
                                 await Future.delayed(Duration(seconds: 1));
@@ -118,6 +120,7 @@ class _ColaActaPageState extends State<ColaActaPage> {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Container(
+                          color: Colors.white,
                           constraints: BoxConstraints(minWidth: width),
                           child: DataTable(
                             dataRowHeight: 70,
@@ -196,7 +199,7 @@ class _ColaActaPageState extends State<ColaActaPage> {
                             columns: [
                               DataColumn(
                                 label: Text(
-                                  'Acta ID',
+                                  'Codigo interno',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: fontSizeRowHead),
@@ -275,9 +278,9 @@ class _ColaActaPageState extends State<ColaActaPage> {
     try {
       final result = await sendActa(acta);
       if (result != null) {
-        Provider.of<AppState>(context, listen: false).addActa(result);
-        Provider.of<AppState>(context, listen: false)
-            .setHorometro(acta.idEquipo!, acta.horometroActual!);
+        // Provider.of<AppState>(context, listen: false).addActa(result);
+        // Provider.of<AppState>(context, listen: false)
+        //     .setHorometro(acta.idEquipo!, acta.horometroActual!);
         Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
         //Eliminar la cola del provider y despues del cache
 
@@ -349,5 +352,14 @@ class _ColaActaPageState extends State<ColaActaPage> {
           )));
     }
     return false;
+  }
+}
+
+removeColaFromCache(Cola cola) async {
+  final HiveService hiveService = HiveService();
+  List<Cola> colas = await hiveService.getBoxes<Cola>('cola');
+  int index = colas.indexWhere((element) => element.data == cola.data);
+  if (index >= 0) {
+    colas[index].delete();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import '../../../const/Colors.dart';
 import '../../../model/movimiento.dart';
 import '../../../model/state/common_var_state.dart';
 import '../../../model/state/app_state.dart';
+import '../../responsive_layout.dart';
 
 class MovimientoDataSource extends DataGridSource {
   DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -58,16 +60,21 @@ class MovimientoDataSource extends DataGridSource {
       return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         return Container(
-          padding: EdgeInsets.all(8.0),
+          padding: e.columnName == 'Empresa'
+              ? EdgeInsets.all(3.0)
+              : EdgeInsets.all(8.0),
           child: Align(
             alignment: e.columnName == 'Observaciones'
                 ? Alignment.topLeft
                 : Alignment.center,
             child: Text(
               e.value.toString(),
+              softWrap: true,
               style:
                   e.columnName == 'Observaciones' || e.columnName == 'Empresa'
-                      ? TextStyle(fontSize: 18)
+                      ? TextStyle(
+                          fontSize: 18,
+                        )
                       : TextStyle(fontSize: 20),
             ),
           ),
@@ -139,37 +146,33 @@ class _FilterPanelWidgetState extends State<FilterPanelMovimientoWidget> {
                         SizedBox(
                           width: 30,
                         ),
-                        Flexible(
-                          child: LayoutBuilder(builder: (context, dimens) {
-                            return dimens.maxWidth < 150
-                                ? IconButton(
+                        isMobileOrTablet(getDevice(context))
+                            ? IconButton(
+                                onPressed: () {
+                                  widget.DateController.selectedDate = null;
+                                  Navigator.pop(context);
+                                },
+                                icon: Icon(
+                                  Icons.date_range_sharp,
+                                  color: Colors.blueAccent,
+                                ),
+                              )
+                            : Flexible(
+                                child: Container(
+                                constraints: BoxConstraints(maxWidth: 200),
+                                child: ElevatedButton(
                                     onPressed: () {
                                       widget.DateController.selectedDate = null;
                                       Navigator.pop(context);
                                     },
-                                    icon: Icon(
-                                      Icons.date_range_sharp,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  )
-                                : Container(
-                                    constraints: BoxConstraints(maxWidth: 250),
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          widget.DateController.selectedDate =
-                                              null;
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Seleccionar todo",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 30.sp,
-                                          ),
-                                        )),
-                                  );
-                          }),
-                        )
+                                    child: Text(
+                                      "Seleccionar todo",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 30.sp,
+                                      ),
+                                    )),
+                              ))
                       ],
                     ),
                     content: Container(
@@ -205,6 +208,8 @@ class _FilterPanelWidgetState extends State<FilterPanelMovimientoWidget> {
                                           .toString()
                                           .startsWith(fecha))
                                       .toList();
+                              (resultado.sort(((a, b) =>
+                                  b.fechaMov.compareTo(a.fechaMov))));
                               Provider.of<AppState>(context, listen: false)
                                   .setFilterMovList(resultado);
 
@@ -212,11 +217,13 @@ class _FilterPanelWidgetState extends State<FilterPanelMovimientoWidget> {
                                 widget.DateController.selectedDate = args.value;
                               });
                             } else {
+                              List<Movimiento> resultado =
+                                  Provider.of<AppState>(context, listen: false)
+                                      .movimientos;
+                              (resultado.sort(((a, b) =>
+                                  b.fechaMov.compareTo(a.fechaMov))));
                               Provider.of<AppState>(context, listen: false)
-                                  .setFilterMovList(Provider.of<AppState>(
-                                          context,
-                                          listen: false)
-                                      .movimientos);
+                                  .setFilterMovList(resultado);
                             }
                           },
                           allowViewNavigation: false,
@@ -246,6 +253,8 @@ class _FilterPanelWidgetState extends State<FilterPanelMovimientoWidget> {
                                         .toString()
                                         .startsWith(fecha))
                                     .toList();
+                            (resultado.sort(
+                                ((a, b) => b.fechaMov.compareTo(a.fechaMov))));
                             Provider.of<AppState>(context, listen: false)
                                 .setFilterMovList(resultado);
                           }
@@ -335,7 +344,7 @@ List<GridColumn> columnsMov(bool borderTop) {
   return <GridColumn>[
     GridColumn(
         columnName: 'fecha_mov',
-        minimumWidth: 230,
+        columnWidthMode: ColumnWidthMode.fitByColumnName,
         label: Container(
             decoration: BoxDecoration(
               color: Colors.red,
@@ -347,7 +356,7 @@ List<GridColumn> columnsMov(bool borderTop) {
             alignment: Alignment.center,
             child: borderTop
                 ? Text(
-                    'Fecha Movimiento',
+                    'Fecha',
                     style: TextStyle(
                         color: Colors.white, fontSize: fontSizeRowHead),
                   )
@@ -359,16 +368,16 @@ List<GridColumn> columnsMov(bool borderTop) {
     if (borderTop)
       GridColumn(
           columnName: 'equipo_id',
-          minimumWidth: 190,
+          minimumWidth: 130,
+          columnWidthMode: ColumnWidthMode.fitByColumnName,
           label: Container(
               padding: const EdgeInsets.all(8.0),
               alignment: Alignment.center,
-              child: Text('Codigo interno',
+              child: AutoSizeText('Codigo interno',
                   style: TextStyle(
                       color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(
         columnName: 'transporte',
-        minimumWidth: 150,
         label: Container(
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
@@ -382,22 +391,26 @@ List<GridColumn> columnsMov(bool borderTop) {
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
             child: Text('Empresa',
+                softWrap: true,
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: fontSizeRowHead,
-                    overflow: TextOverflow.ellipsis)))),
+                  color: Colors.white,
+                  fontSize: fontSizeRowHead,
+                )))),
     GridColumn(
         columnName: 'tipo',
         minimumWidth: 150,
+        columnWidthMode: ColumnWidthMode.fitByCellValue,
         label: Container(
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
             child: Text('Tipo',
                 style: TextStyle(
-                    color: Colors.white, fontSize: fontSizeRowHead)))),
+                    color: Colors.white,
+                    fontSize: fontSizeRowHead,
+                    overflow: TextOverflow.ellipsis)))),
     GridColumn(
         columnName: 'Acta ID',
-        minimumWidth: 150,
+        columnWidthMode: ColumnWidthMode.fitByColumnName,
         label: Container(
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
@@ -406,11 +419,10 @@ List<GridColumn> columnsMov(bool borderTop) {
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(
         columnName: 'N° Guia despacho',
-        minimumWidth: 250,
         label: Container(
             padding: const EdgeInsets.all(8.0),
             alignment: Alignment.center,
-            child: Text('N° Guia despacho',
+            child: AutoSizeText('N° Guia despacho',
                 style: TextStyle(
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(

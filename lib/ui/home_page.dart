@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/equipo.dart';
+import 'package:app_licman/model/inspeccion.dart';
+import 'package:app_licman/model/modeloimagen.dart';
+import 'package:app_licman/model/movimiento.dart';
 import 'package:app_licman/model/state/acta_state.dart';
 import 'package:app_licman/model/state/app_state.dart';
 
@@ -14,14 +19,19 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:provider/provider.dart';
 
+import '../const/Strings.dart';
 import '../intent_file.dart';
+import '../model/cliente.dart';
+import '../model/editCliente.dart';
 import '../plugins/flutter_typeahed/src/flutter_typeahead.dart';
 import '../repository/update_resources_repository.dart';
 import 'detalle_equipo_pages/dispatcher_device.dart';
 import 'detalle_equipo_pages/top_side_ui.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
+  const Homepage({Key? key, required this.showInternetError}) : super(key: key);
+  final bool showInternetError;
 
   @override
   HomepageState createState() => HomepageState();
@@ -39,12 +49,109 @@ class HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
+
     Provider.of<AppState>(context, listen: false).initState(context).then((x) {
-      UpdateStateRepository().update(context);
-      isNotSearching = true;
+      UpdateStateRepository().update(context).then((value) {
+        isNotSearching = true;
+        //Movimientos cliente name and codigo interno
+        Provider.of<AppState>(context, listen: false).addColumnsToMov();
+
+        IO.Socket socket = IO.io(Strings.urlServer, <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect': false
+        });
+        socket.connect();
+        socket.onConnect((_) {
+          print('connect');
+        });
+
+        final appStateProvider = Provider.of<AppState>(context, listen: false);
+        //Equipos
+        socket.on('new equipo',
+            (data) => appStateProvider.addEquipo(Equipo.fromJson(data)));
+        socket.on('edit equipo',
+            (data) => appStateProvider.editEquipo(Equipo.fromJson(data)));
+        socket.on('remove equipo',
+            (id) => appStateProvider.removeEquipo(int.parse(id)));
+
+        //Actas
+        socket.on(
+            'new acta',
+            (data) =>
+                appStateProvider.addActaSocket(Inspeccion.fromJson(data)));
+        socket.on(
+            'edit acta',
+            (data) =>
+                appStateProvider.editActaSocket(Inspeccion.fromJson(data)));
+        socket.on('remove acta',
+            (id) => appStateProvider.removeActaSocket(int.parse(id)));
+
+        //Clientes
+
+        socket.on('new cliente', (data) {
+          print("new cliente");
+          appStateProvider.addClienteSocket(Cliente.fromJson(data));
+        });
+
+        socket.on('edit cliente', (data) {
+          print("edit cliente");
+          appStateProvider.updateRutFromCliente(
+              EditCliente.fromJson(Map<String, dynamic>.from(data)));
+        });
+
+        socket.on('remove cliente',
+            (rut) => appStateProvider.removeClienteSocket(rut));
+
+        //Movimientos
+        socket.on(
+            'new movimiento',
+            (data) => appStateProvider
+                .addMovimientoSocket(Movimiento.fromJson(data)));
+        socket.on(
+            'edit movimiento',
+            (data) => appStateProvider
+                .editMovimientoSocket(Movimiento.fromJson(data)));
+
+        socket.on('remove movimiento',
+            (id) => appStateProvider.removeMovimientoSocket(int.parse(id)));
+
+        //Imagenes
+
+        socket.on(
+            'new modelo',
+            (data) =>
+                appStateProvider.addModeloSocket(ModeloImg.fromJson(data)));
+        socket.on(
+            'edit modelo',
+            (data) =>
+                appStateProvider.editModeloSocket(ModeloImg.fromJson(data)));
+        socket.on('remove modelo',
+            (modelo) => appStateProvider.removeModeloSocket(modelo));
+
+        socket.onDisconnect((_) => print('disconnect'));
+        socket.on('fromServer', (_) => print(_));
+      });
     });
 
     Provider.of<ActaState>(context, listen: false).init();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      if (widget.showInternetError) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: const [
+              Icon(
+                Icons.dangerous_outlined,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text('Sin conexion a internet'),
+            ],
+          ),
+        ));
+      }
+    });
   }
 
   @override
@@ -117,16 +224,17 @@ class HomepageState extends State<Homepage> {
                                 controller: _typeAheadController,
                                 style: TextStyle(color: dark, fontSize: 20),
                                 decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: dark,
-                                    size: 25,
-                                  ),
-                                  hintText: 'Codigo interno',
-                                  border: const OutlineInputBorder(),
-                                )),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color: Colors.grey,
+                                      size: 25,
+                                    ),
+                                    hintText: 'Codigo interno',
+                                    hintStyle: const TextStyle(fontSize: 20),
+                                    border: const OutlineInputBorder(),
+                                    isDense: true)),
                             suggestionsCallback: (pattern) {
                               List<Equipo> equiposSearch = [];
 
@@ -160,7 +268,7 @@ class HomepageState extends State<Homepage> {
                               return ListTile(
                                 title: Text(
                                   suggestion.id.toString(),
-                                  style: TextStyle(fontSize: 25),
+                                  style: TextStyle(fontSize: 20),
                                 ),
                               );
                             },
@@ -250,44 +358,3 @@ class HomepageState extends State<Homepage> {
     );
   }
 }
-
-
-/*
-   TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Buscar equipos..',
-                            prefixIcon: Icon(Icons.search),
-                            fillColor: Colors.white,
-                            filled: true,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                          onChanged: (value) {
-                            if (value == "") {
-                              Provider.of<AppState>(context, listen: false)
-                                  .setFilter(Provider.of<AppState>(context,
-                                          listen: false)
-                                      .equipos);
-                            } else {
-                              List<Equipo> equiposSearch = Provider.of<
-                                      AppState>(context, listen: false)
-                                  .equipos
-                                  .where((element) =>
-                                      element.id.toString().startsWith(value) ||
-                                      element.tipo
-                                          .toLowerCase()
-                                          .startsWith(value.toLowerCase()) ||
-                                      element.marca
-                                          .toLowerCase()
-                                          .startsWith(value.toLowerCase()) ||
-                                      element.modelo
-                                          .toLowerCase()
-                                          .startsWith(value.toLowerCase()))
-                                  .toList();
-                              Provider.of<AppState>(context, listen: false)
-                                  .setFilter(equiposSearch);
-                            }
-                          },
-                        ),
- */

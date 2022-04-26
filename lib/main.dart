@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_licman/model/cliente.dart';
 import 'package:app_licman/model/equipo.dart';
 import 'package:app_licman/model/movimiento.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
@@ -53,17 +56,32 @@ void main() async {
   );
 }
 
+class LoginResult {
+  bool resultado = false;
+  bool internetError = false;
+}
+
 class MyApp extends StatelessWidget {
-  Future<bool> _validateToken() async {
+  Future<LoginResult> _validateToken() async {
     var box = await Hive.openBox('user');
     final token = box.get('token');
     final user = box.get('user');
+    LoginResult loginResult = LoginResult();
+    if (token != null && user != null) {
+      try {
+        final resultado = await loginViaToken(user, token);
+        if (resultado) {
+          loginResult.resultado = true;
+        }
+      } on SocketException {
+        loginResult.internetError = true;
+        print("Sin conexion");
+      } catch (e) {}
 
-    if (token != null && user != null && user != null) {
-      final resultado = await loginViaToken(user, token);
-      return resultado;
+      return loginResult;
     }
-    return false;
+
+    return loginResult;
   }
 
   const MyApp({Key? key}) : super(key: key);
@@ -78,9 +96,14 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => ActaState())
         ],
         child: MaterialApp(
-            useInheritedMediaQuery: true,
-            locale: DevicePreview.locale(context),
-            builder: DevicePreview.appBuilder,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate
+            ],
+            supportedLocales: const [
+              Locale('en', 'US'), // English, no country code
+              Locale('es', ''),
+            ],
+            locale: const Locale('es'),
             scrollBehavior: MyCustomScrollBehavior(),
             title: 'Licman App',
             debugShowCheckedModeBanner: false,
@@ -88,12 +111,14 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'Poppins',
                 primarySwatch: Colors.blue,
                 scaffoldBackgroundColor: yellowBackground),
-            home: FutureBuilder<bool>(
+            home: FutureBuilder<LoginResult>(
                 future: _validateToken(),
-                builder: (context, AsyncSnapshot<bool> snapshot) {
+                builder: (context, AsyncSnapshot<LoginResult> snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data == true) {
-                      return const Homepage();
+                    if (snapshot.data?.resultado == true) {
+                      return const Homepage(showInternetError: false);
+                    } else if (snapshot.data?.internetError == true) {
+                      return const Homepage(showInternetError: true);
                     } else {
                       return const LoginPage();
                     }

@@ -2,6 +2,7 @@ import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/equipo.dart';
 import 'package:app_licman/model/modeloimagen.dart';
 import 'package:app_licman/model/state/app_state.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -171,7 +172,7 @@ class RowText extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          AutoSizeText(
             firstText,
             style: TextStyle(color: Colors.black, fontSize: fontSizeText),
           ),
@@ -181,7 +182,7 @@ class RowText extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.topRight,
-              child: Text(
+              child: AutoSizeText(
                 secondText,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: Colors.black, fontSize: fontSizeText),

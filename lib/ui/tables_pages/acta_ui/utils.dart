@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ import '../../../model/inspeccion.dart';
 import '../../../model/state/common_var_state.dart';
 import '../../../model/state/app_state.dart';
 import '../../../plugins/dart_rut_form.dart';
+import '../../responsive_layout.dart';
 
 class FilterPanelWidget extends StatefulWidget {
   const FilterPanelWidget({Key? key, required this.dateController})
@@ -74,38 +76,33 @@ class _FilterPanelWidgetState extends State<FilterPanelWidget> {
                         SizedBox(
                           width: 5.w,
                         ),
-                        Flexible(
-                          child: LayoutBuilder(builder: (context, dimens) {
-                            print(dimens);
-                            return dimens.maxWidth < 150
-                                ? IconButton(
+                        isMobileOrTablet(getDevice(context))
+                            ? IconButton(
+                                onPressed: () {
+                                  widget.dateController.selectedDate = null;
+                                  Navigator.pop(context);
+                                },
+                                icon: Icon(
+                                  Icons.date_range_sharp,
+                                  color: Colors.blueAccent,
+                                ),
+                              )
+                            : Flexible(
+                                child: Container(
+                                constraints: BoxConstraints(maxWidth: 200),
+                                child: ElevatedButton(
                                     onPressed: () {
                                       widget.dateController.selectedDate = null;
                                       Navigator.pop(context);
                                     },
-                                    icon: Icon(
-                                      Icons.date_range_sharp,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  )
-                                : Container(
-                                    constraints: BoxConstraints(maxWidth: 200),
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          widget.dateController.selectedDate =
-                                              null;
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Seleccionar todo",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 30.sp,
-                                          ),
-                                        )),
-                                  );
-                          }),
-                        )
+                                    child: Text(
+                                      "Seleccionar todo",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 30.sp,
+                                      ),
+                                    )),
+                              ))
                       ],
                     ),
                     content: Container(
@@ -313,7 +310,6 @@ List<GridColumn> getColumnsActa(bool borderTop) {
   return <GridColumn>[
     GridColumn(
         columnName: 'acta_id',
-        minimumWidth: 150,
         label: Container(
             decoration: BoxDecoration(
               color: Colors.red,
@@ -331,11 +327,11 @@ List<GridColumn> getColumnsActa(bool borderTop) {
             ))),
     GridColumn(
         columnName: 'equipo_id',
-        minimumWidth: 190,
+        minimumWidth: 70,
         label: Container(
             padding: EdgeInsets.all(8.0),
             alignment: Alignment.center,
-            child: Text('Codigo interno',
+            child: AutoSizeText('Codigo interno',
                 style: TextStyle(
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(
@@ -349,11 +345,11 @@ List<GridColumn> getColumnsActa(bool borderTop) {
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(
         columnName: 'altura',
-        minimumWidth: 150,
+        minimumWidth: 80,
         label: Container(
             padding: EdgeInsets.all(8.0),
             alignment: Alignment.center,
-            child: Text('Altura [mm]',
+            child: AutoSizeText('Altura [mm]',
                 style: TextStyle(
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(

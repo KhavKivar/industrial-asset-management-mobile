@@ -17,6 +17,7 @@ import '../../../plugins/dart_rut_form.dart';
 
 import '../../view_acta_page/acta_only_view_page.dart';
 import '../../view_acta_page/dispatcher_acta_only_view.dart';
+import 'card_widget.dart';
 
 class MovTable extends StatefulWidget {
   MovTable(
@@ -58,21 +59,22 @@ class _MovTableState extends State<MovTable>
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       movimientos = Provider.of<AppState>(context, listen: false).movimientos;
-      final clientes = Provider.of<AppState>(context, listen: false).clientes;
       inspecciones =
           Provider.of<AppState>(context, listen: false).inspeccionList;
-      for (int i = 0; i < movimientos.length; i++) {
-        movimientos[i].equipoId = inspecciones
-            .firstWhere((element) =>
-                element.idInspeccion == movimientos[i].idInspeccion)
-            .idEquipo
-            .toString();
-        movimientos[i].nombreCliente = clientes
-            .firstWhere((element) =>
-                element.rut.toString() == movimientos[i].rut.toString())
-            .nombre
-            .toString();
-      }
+      // final clientes = Provider.of<AppState>(context, listen: false).clientes;
+
+      // for (int i = 0; i < movimientos.length; i++) {
+      //   movimientos[i].equipoId = inspecciones
+      //       .firstWhere((element) =>
+      //           element.idInspeccion == movimientos[i].idInspeccion)
+      //       .idEquipo
+      //       .toString();
+      //   movimientos[i].nombreCliente = clientes
+      //       .firstWhere((element) =>
+      //           element.rut.toString() == movimientos[i].rut.toString())
+      //       .nombre
+      //       .toString();
+      // }
 
       Provider.of<AppState>(context, listen: false)
           .setMovimientoList(movimientos);
@@ -85,7 +87,7 @@ class _MovTableState extends State<MovTable>
       List<Movimiento> resultado = movimientos
           .where((element) => element.fechaMov.toString().startsWith(formatted))
           .toList();
-
+      (resultado.sort(((a, b) => b.fechaMov.compareTo(a.fechaMov))));
       Provider.of<AppState>(context, listen: false).setFilterMovList(resultado);
     });
   }
@@ -169,78 +171,102 @@ class _MovTableState extends State<MovTable>
           SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    width: 1,
+          widget.device == 'mobile'
+              ? Expanded(
+                  child: ListView.builder(
+                    itemCount: Provider.of<AppState>(context)
+                        .filterMovimientoList
+                        .length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CardMovimientoWidget(
+                          movimiento: Provider.of<AppState>(context)
+                              .filterMovimientoList[index]);
+                    },
                   ),
-                  borderRadius: BorderRadius.circular(5)),
-              child: Focus(
-                descendantsAreFocusable: false,
-                child: SfDataGridTheme(
-                  data: SfDataGridThemeData(
-                    headerColor: dark,
-                    rowHoverColor: Colors.yellow,
-                    headerHoverColor: Colors.red,
-                    rowHoverTextStyle: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 14,
+                )
+              : Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Focus(
+                      descendantsAreFocusable: false,
+                      child: SfDataGridTheme(
+                        data: SfDataGridThemeData(
+                          headerColor: dark,
+                          rowHoverColor: Colors.yellow,
+                          headerHoverColor: Colors.red,
+                          rowHoverTextStyle: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                        ),
+                        child: SfDataGrid(
+                          controller: widget.dataGridController,
+                          allowSwiping: true,
+                          swipeMaxOffset: 130,
+                          frozenColumnsCount: 1,
+                          onQueryRowHeight: (details) {
+                            // Set the row height as 70.0 to the column header row.
+
+                            return details
+                                .getIntrinsicRowHeight(details.rowIndex);
+                          },
+                          startSwipeActionsBuilder: (BuildContext context,
+                              DataGridRow row, int rowIndex) {
+                            return GestureDetector(
+                                onTap: () {
+                                  final int indexActa = Provider.of<AppState>(
+                                          context,
+                                          listen: false)
+                                      .inspeccionList
+                                      .lastIndexWhere((element) =>
+                                          element.idInspeccion ==
+                                          Provider.of<AppState>(context,
+                                                  listen: false)
+                                              .filterMovimientoList[rowIndex]
+                                              .idInspeccion);
+
+                                  if (indexActa != -1) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DispatcherActaOnlyView(
+                                                    inspeccion: inspecciones[
+                                                        indexActa]))).then(
+                                        (value) {
+                                      if (widget.device == 'mobile' ||
+                                          widget.device == 'tablet')
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                    color: Colors.deepPurple,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.remove_red_eye,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                    )));
+                          },
+                          source: MovimientoDataSource(
+                              movimientos: Provider.of<AppState>(context)
+                                  .filterMovimientoList),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          columns: columnsMov(true),
+                        ),
+                      ),
                     ),
                   ),
-                  child: SfDataGrid(
-                    controller: widget.dataGridController,
-                    allowSwiping: true,
-                    swipeMaxOffset: 130,
-                    startSwipeActionsBuilder:
-                        (BuildContext context, DataGridRow row, int rowIndex) {
-                      return GestureDetector(
-                          onTap: () {
-                            final int indexActa = inspecciones.lastIndexWhere(
-                                (element) =>
-                                    element.idInspeccion ==
-                                    Provider.of<AppState>(context,
-                                            listen: false)
-                                        .filterMovimientoList[rowIndex]
-                                        .idInspeccion);
-                            if (indexActa != -1) {
-                              Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DispatcherActaOnlyView(
-                                                  inspeccion:
-                                                      inspecciones[indexActa])))
-                                  .then((value) {
-                                if (widget.device == 'mobile' ||
-                                    widget.device == 'tablet')
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                              });
-                            }
-                          },
-                          child: Container(
-                              color: Colors.deepPurple,
-                              child: const Center(
-                                child: Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                              )));
-                    },
-                    source: MovimientoDataSource(
-                        movimientos: Provider.of<AppState>(context)
-                            .filterMovimientoList),
-                    columnWidthMode: ColumnWidthMode.fill,
-                    columns: columnsMov(true),
-                  ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -260,25 +286,23 @@ class _MovTableState extends State<MovTable>
           "-" +
           dateController.selectedDate.toString().split("-")[1];
     }
+    List<Movimiento> resultado = [];
 
     switch (filtros) {
       case 0:
         {
-          List<Movimiento> resultado = movimientos
+          resultado = movimientos
               .where((element) =>
                   element.equipoId.toString().startsWith(value.toLowerCase()) &&
                   (fecha == null
                       ? true
                       : element.fechaMov.toString().startsWith(fecha)))
               .toList();
-
-          Provider.of<AppState>(context, listen: false)
-              .setFilterMovList(resultado);
         }
         break;
       case 1:
         {
-          List<Movimiento> resultado = movimientos
+          resultado = movimientos
               .where((element) =>
                   element.nombreCliente
                       .toLowerCase()
@@ -287,13 +311,11 @@ class _MovTableState extends State<MovTable>
                       ? true
                       : element.fechaMov.toString().startsWith(fecha)))
               .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterMovList(resultado);
         }
         break;
       case 2:
         {
-          List<Movimiento> resultado = movimientos
+          resultado = movimientos
               .where((element) =>
                   (element.rut.startsWith(value.toLowerCase()) ||
                       RUTValidator.deFormat(element.rut)
@@ -302,14 +324,12 @@ class _MovTableState extends State<MovTable>
                       ? true
                       : element.fechaMov.toString().startsWith(fecha)))
               .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterMovList(resultado);
         }
         break;
 
       case 3:
         {
-          List<Movimiento> resultado = movimientos
+          resultado = movimientos
               .where((element) =>
                   element.idInspeccion
                       .toString()
@@ -318,13 +338,11 @@ class _MovTableState extends State<MovTable>
                       ? true
                       : element.fechaMov.toString().startsWith(fecha)))
               .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterMovList(resultado);
         }
         break;
       case 4:
         {
-          List<Movimiento> resultado = movimientos
+          resultado = movimientos
               .where((element) =>
                   element.idGuiaDespacho
                       .toString()
@@ -333,11 +351,12 @@ class _MovTableState extends State<MovTable>
                       ? true
                       : element.fechaMov.toString().startsWith(fecha)))
               .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterMovList(resultado);
         }
         break;
     }
+
+    (resultado.sort(((a, b) => b.fechaMov.compareTo(a.fechaMov))));
+    Provider.of<AppState>(context, listen: false).setFilterMovList(resultado);
   }
 
   @override

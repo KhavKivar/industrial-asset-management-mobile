@@ -1,3 +1,4 @@
+import 'package:app_licman/ui/tables_pages/acta_ui/card_acta_widget.dart';
 import 'package:app_licman/ui/tables_pages/acta_ui/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,7 @@ class _ActaTableState extends State<ActaTable>
                   TextField(
                     controller: searchController,
                     focusNode: widget.actaFocusController,
+                    style: TextStyle(color: dark, fontSize: 20),
                     decoration: InputDecoration(
                       hintText: 'Buscar actas..',
                       hintStyle: const TextStyle(fontSize: 20),
@@ -112,7 +114,6 @@ class _ActaTableState extends State<ActaTable>
                       suffixIcon: IconButton(
                           focusNode: FocusNode(skipTraversal: true),
                           onPressed: () {
-                        
                             setState(() {
                               showFilter = !showFilter;
                             });
@@ -146,99 +147,113 @@ class _ActaTableState extends State<ActaTable>
           SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5)),
-              child: Focus(
-                descendantsAreFocusable: false,
-                child: SfDataGridTheme(
-                  data: SfDataGridThemeData(
-                    headerColor: dark,
-                    headerHoverColor: Colors.red,
-                    rowHoverColor: Colors.yellow,
-                    rowHoverTextStyle: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 14,
+          widget.device == 'mobile'
+              ? Expanded(
+                  child: ListView.builder(
+                  itemCount: Provider.of<AppState>(context)
+                      .filterInspeccionList
+                      .length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CardActaWidget(
+                        inspeccion: Provider.of<AppState>(context)
+                            .filterInspeccionList[index]);
+                  },
+                ))
+              : Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Focus(
+                      descendantsAreFocusable: false,
+                      child: SfDataGridTheme(
+                        data: SfDataGridThemeData(
+                          headerColor: dark,
+                          headerHoverColor: Colors.red,
+                          rowHoverColor: Colors.yellow,
+                          rowHoverTextStyle: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                          ),
+                        ),
+                        child: SfDataGrid(
+                          controller: widget.dataGridController,
+                          allowSwiping: true,
+                          frozenColumnsCount: 1,
+                          swipeMaxOffset: 130,
+                          source: ActaDataSource(
+                              actas: Provider.of<AppState>(context)
+                                  .filterInspeccionList),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          startSwipeActionsBuilder: (BuildContext context,
+                              DataGridRow row, int rowIndex) {
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DispatcherActaOnlyView(
+                                                      inspeccion: filterList[
+                                                          rowIndex])))
+                                      .then((value) {
+                                    if (widget.device == 'mobile' ||
+                                        widget.device == 'tablet')
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                  });
+                                },
+                                child: Container(
+                                    color: Colors.deepPurple,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.remove_red_eye,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                    )));
+                          },
+                          endSwipeActionsBuilder: (BuildContext context,
+                              DataGridRow row, int rowIndex) {
+                            return GestureDetector(
+                                onTap: () {
+                                  Inspeccion acta = filterList[rowIndex];
+                                  Provider.of<ActaState>(context, listen: false)
+                                      .convertObjectTostate(acta, context);
+                                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DispatcherActaCreatePages(
+                                                      edit: true,
+                                                      id: acta.idInspeccion)))
+                                      .then((value) {
+                                    Provider.of<CommonState>(context,
+                                            listen: false)
+                                        .changeActaIndex(0);
+                                    if (widget.device == 'mobile' ||
+                                        widget.device == 'tablet')
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                  });
+                                },
+                                child: Container(
+                                    color: Colors.deepPurple,
+                                    child: const Center(
+                                      child: Icon(Icons.edit,
+                                          color: Colors.white, size: 30),
+                                    )));
+                          },
+                          columns: getColumnsActa(true),
+                        ),
+                      ),
                     ),
                   ),
-                  child: SfDataGrid(
-                    controller: widget.dataGridController,
-                    allowSwiping: true,
-                    swipeMaxOffset: 130,
-                    source: ActaDataSource(
-                        actas: Provider.of<AppState>(context)
-                            .filterInspeccionList),
-                    columnWidthMode: ColumnWidthMode.fill,
-                    startSwipeActionsBuilder:
-                        (BuildContext context, DataGridRow row, int rowIndex) {
-                      return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DispatcherActaOnlyView(
-                                                inspeccion:
-                                                    filterList[rowIndex])))
-                                .then((value) {
-                              if (widget.device == 'mobile' ||
-                                  widget.device == 'tablet')
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                            });
-                          },
-                          child: Container(
-                              color: Colors.deepPurple,
-                              child: const Center(
-                                child: Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                              )));
-                    },
-                    endSwipeActionsBuilder:
-                        (BuildContext context, DataGridRow row, int rowIndex) {
-                      return GestureDetector(
-                          onTap: () {
-                            Inspeccion acta = filterList[rowIndex];
-                            Provider.of<ActaState>(context, listen: false)
-                                .convertObjectTostate(acta, context);
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DispatcherActaCreatePages(
-                                                edit: true,
-                                                id: acta.idInspeccion)))
-                                .then((value) {
-                              Provider.of<CommonState>(context, listen: false)
-                                  .changeActaIndex(0);
-                              if (widget.device == 'mobile' ||
-                                  widget.device == 'tablet')
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                            });
-                          },
-                          child: Container(
-                              color: Colors.deepPurple,
-                              child: const Center(
-                                child: Icon(Icons.edit,
-                                    color: Colors.white, size: 30),
-                              )));
-                    },
-                    columns: getColumnsActa(true),
-                  ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );

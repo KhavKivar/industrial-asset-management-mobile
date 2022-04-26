@@ -13,6 +13,13 @@ String getDevice(context) {
   }
 }
 
+bool isMobileOrTablet(String device) {
+  if (device == 'mobile' || device == 'tablet') {
+    return true;
+  }
+  return false;
+}
+
 class ResponsiveLayout extends StatelessWidget {
   const ResponsiveLayout(
       {Key? key,

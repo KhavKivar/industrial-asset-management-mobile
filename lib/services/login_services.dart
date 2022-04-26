@@ -26,6 +26,7 @@ Future<bool> loginViaToken(user, token) async {
       }
     }
   } catch (e) {
+    rethrow;
     print("error $e");
   }
   return result;

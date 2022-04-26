@@ -69,7 +69,7 @@ callCopyWith<T extends HiveObject>(T item1, T item2) {
   }
 }
 
-updateCachUltraFast<T extends HiveObject>(
+updateCacheUltraFast<T extends HiveObject>(
     String cache, List<T> listToUpdate) async {
   final HiveService hiveService = HiveService();
   Set<String> setPrevActaCacheIds = {};
@@ -78,13 +78,15 @@ updateCachUltraFast<T extends HiveObject>(
     print("Cache $cache -- Ultra fast");
   }
 
-  List<T> prevItemCache = List<T>.from(await hiveService.getBoxes(cache));
+  List<T> prevItemCache = await hiveService.getBoxes<T>(cache);
   for (var element in prevItemCache) {
     setPrevActaCacheIds.add(getIds<T>(element));
   }
-  for (var element in listToUpdate) {
-    setNewActaCacheIds.add(getIds<T>(element));
+  for (var element1 in listToUpdate) {
+    setNewActaCacheIds.add(getIds<T>(element1));
   }
+  print(
+      "prev: ${setPrevActaCacheIds.length} now: ${setNewActaCacheIds.length}");
 
   //update
   for (int i = 0; i < prevItemCache.length; i++) {
@@ -101,26 +103,29 @@ updateCachUltraFast<T extends HiveObject>(
   final Set<String> bMinusA =
       setNewActaCacheIds.difference(setPrevActaCacheIds);
 
-  var actasCacheList = await Hive.openBox('ACTA');
+  print("to add ${bMinusA.length}");
+  //var actasCacheList = await Hive.openBox<T>(cache);
 
   for (int i = 0; i < bMinusA.length; i++) {
     int index = listToUpdate
         .indexWhere((element) => getIds<T>(element) == bMinusA.elementAt(i));
     if (index >= 0) {
       print("add ${getIds<T>(listToUpdate[index])}");
-      actasCacheList.add(listToUpdate[index]);
+      hiveService.addOneBox<T>(listToUpdate[index], cache);
+      //actasCacheList.add(listToUpdate[index]);
     }
   }
+
   //remove
   final Set<String> aMinusB =
       setPrevActaCacheIds.difference(setNewActaCacheIds);
+  print("to remove ${aMinusB.length}");
   for (int i = 0; i < aMinusB.length; i++) {
     int index = prevItemCache
         .indexWhere((element) => getIds<T>(element) == aMinusB.elementAt(i));
     if (index >= 0) {
-      if (kDebugMode) {
-        print("remove ${getIds<T>(prevItemCache[index])}");
-      }
+      print("remove ${getIds<T>(prevItemCache[index])}");
+
       prevItemCache[index].delete();
     }
   }

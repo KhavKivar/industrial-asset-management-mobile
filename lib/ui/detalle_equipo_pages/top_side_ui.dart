@@ -2,6 +2,8 @@ import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/equipo.dart';
 import 'package:app_licman/model/inspeccion.dart';
 import 'package:app_licman/model/state/app_state.dart';
+import 'package:app_licman/ui/tables_pages/acta_ui/card_acta_widget.dart';
+import 'package:app_licman/ui/tables_pages/movimiento_ui/card_widget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -133,9 +135,22 @@ class _CardEquipoDetalleState extends State<CardEquipoDetalle> {
                               )
                             else if (choose == 1)
                               if (inspecciones.isNotEmpty)
-                                ActaPerEquipoPage(
-                                  width: width,
-                                  inspecciones: inspecciones,
+                                Expanded(
+                                  child: Container(
+                                    color: yellowBackground,
+                                    child: ListView.builder(
+                                      itemCount: inspecciones.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5.0),
+                                          child: CardActaWidget(
+                                              inspeccion: inspecciones[index]),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 )
                               else
                                 const Center(
@@ -150,11 +165,24 @@ class _CardEquipoDetalleState extends State<CardEquipoDetalle> {
                                       "No hay movimientos todavia",
                                       style: TextStyle(fontSize: 25),
                                     ))
-                                  : MovEquipoPage(
-                                      inspecciones: inspecciones,
-                                      movimientos: movimientos,
-                                      width: width,
-                                      tipo: widget.tipo,
+                                  : Expanded(
+                                      child: Container(
+                                        color: yellowBackground,
+                                        child: ListView.builder(
+                                          itemCount: movimientos.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                              child: CardMovimientoWidget(
+                                                  movimiento:
+                                                      movimientos[index]),
+                                            );
+                                          },
+                                        ),
+                                      ),
                                     )
                           ],
                         ),

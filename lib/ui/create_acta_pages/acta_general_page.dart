@@ -136,6 +136,7 @@ class _ActaGeneralState extends State<ActaGeneral>
                                   ? fontSizeTypeAheadIcon
                                   : fontSizeIconTextTablet,
                             ),
+                            isDense: true,
                             hintText: 'Codigo interno',
                             border: const OutlineInputBorder(),
                           )),

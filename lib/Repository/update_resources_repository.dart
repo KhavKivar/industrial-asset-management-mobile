@@ -20,12 +20,16 @@ class UpdateStateRepository {
   final HiveService hiveService = HiveService();
 
   Future<bool> update(context) async {
-    UpdateTime cacheEq = await (hiveService.getBox('cache_time_equipo'));
-    UpdateTime cacheImg = await (hiveService.getBox('cache_time_img'));
-    UpdateTime cacheActa = await (hiveService.getBox('cache_time_acta'));
+    UpdateTime cacheEq =
+        await hiveService.getBox<UpdateTime>('cache_time_equipo');
+    UpdateTime cacheImg =
+        await hiveService.getBox<UpdateTime>('cache_time_img');
+    UpdateTime cacheActa =
+        await hiveService.getBox<UpdateTime>('cache_time_acta');
     UpdateTime cacheMovimientos =
-        await (hiveService.getBox('cache_time_movimiento'));
-    UpdateTime cacheClientes = await (hiveService.getBox('cache_time_cliente'));
+        await hiveService.getBox<UpdateTime>('cache_time_movimiento');
+    UpdateTime cacheClientes =
+        await hiveService.getBox<UpdateTime>('cache_time_cliente');
 
     List<UpdateTime> realUpdateList = await getLastUpdate();
     dynamic contextMain =
@@ -41,6 +45,8 @@ class UpdateStateRepository {
             .setEquipo(await EquipoRepository().get(true));
       }
       //Actualizar cache de actas
+      print(
+          "cache time ${cacheActa.updateTime.toString()} real ${realUpdateList[1].updateTime.toString()}");
       if (cacheActa.updateTime.toString() !=
           realUpdateList[1].updateTime.toString()) {
         if (kDebugMode) {

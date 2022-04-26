@@ -32,7 +32,11 @@ class _LoginPageState extends State<LoginPage> {
           _btnController.success();
         });
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Homepage()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => Homepage(
+                      showInternetError: false,
+                    )));
         return;
       } else if (response['status'] == 'invalid user or password') {
       } else {}

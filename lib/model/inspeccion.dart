@@ -2,6 +2,7 @@
 //
 //     final inspeccion = inspeccionFromJson(jsonString);
 
+import 'package:app_licman/model/data_class.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
@@ -468,6 +469,7 @@ class Inspeccion extends HiveObject with EquatableMixin {
         "nombre": nombre,
       };
 
+  @override
   copyWith(Inspeccion inspeccionToCopy) {
     idInspeccion = inspeccionToCopy.idInspeccion;
     alarmaRetroceso = inspeccionToCopy.alarmaRetroceso;

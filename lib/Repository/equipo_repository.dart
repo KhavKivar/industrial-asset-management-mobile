@@ -12,37 +12,50 @@ import '../services/util.dart';
 
 class EquipoRepository {
   final HiveService hiveService = HiveService();
+  final String boxName = 'Equipos';
+  final String boxCacheName = 'cache_time_equipo';
+
+  editSave(Equipo equipo) async {
+    await hiveService.editObject<Equipo>(equipo, boxName);
+  }
+
+  removeEquipo(int id) async {
+    await hiveService.deleteObject<Equipo>(id, boxName);
+  }
+
+  saveEquipo(Equipo equipo) async {
+    await hiveService.addOneBox<Equipo>(equipo, boxName);
+  }
 
   Future<List<Equipo>> get(bool forceUpdate) async {
-    bool exists = await hiveService.isExists(boxName: "Equipos");
+    bool exists = await hiveService.isExists<Equipo>(boxName: boxName);
     List<Equipo> equipos = [];
 
     if (exists && !forceUpdate) {
       print("Cache equipos");
-      var eq = await (hiveService.getBoxes('Equipos'));
-      return List<Equipo>.from(eq);
+      equipos = await hiveService.getBoxes<Equipo>(boxName);
+      equipos.sort((a, b) => a.id.compareTo(b.id));
+      return equipos;
     } else {
       equipos = await getEquipos();
-
       if (exists) {
-        updateCachUltraFast<Equipo>('Equipos', equipos);
+        updateCacheUltraFast<Equipo>(boxName, equipos);
       } else {
-        await hiveService.addBoxes(equipos, "Equipos");
+        await hiveService.addBoxes<Equipo>(equipos, boxName);
       }
-
       bool cacheExist =
-          await hiveService.isExists(boxName: "cache_time_equipo");
+          await hiveService.isExists<UpdateTime>(boxName: boxCacheName);
       List<UpdateTime> updateList = await getLastUpdate();
-      if (cacheExist) {
-        hiveService.removeBoxes("cache_time_equipo").then((x) async {
+      if (updateList.isNotEmpty) {
+        if (cacheExist) {
+          hiveService.removeBoxes<UpdateTime>(boxCacheName).then((x) async {
+            UpdateTime timeEq = updateList[0];
+            await hiveService.addOneBox<UpdateTime>(timeEq, boxCacheName);
+          });
+        } else {
           UpdateTime timeEq = updateList[0];
-          print(timeEq.updateTime.toString());
-          await hiveService.addOneBox(timeEq, "cache_time_equipo");
-        });
-      } else {
-        UpdateTime timeEq = updateList[0];
-        print(timeEq.updateTime.toString());
-        await hiveService.addOneBox(timeEq, "cache_time_equipo");
+          await hiveService.addOneBox<UpdateTime>(timeEq, boxCacheName);
+        }
       }
     }
     return equipos;
