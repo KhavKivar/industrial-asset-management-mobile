@@ -45,12 +45,15 @@ class CardMovimientoWidget extends StatelessWidget {
                   firstValue: "Fecha Movimiento: ",
                   secondValue: formatter.format(movimiento.fechaMov)),
               _RowText(
-                  firstValue: "Codigo interno: ",
-                  secondValue: movimiento.equipoId.toString()),
+                  firstValue: "Transporte: ",
+                  secondValue: movimiento.transporte),
               _RowText(
                   firstValue: "Empresa: ",
                   secondValue: movimiento.nombreCliente),
               _RowText(firstValue: "Tipo: ", secondValue: movimiento.tipo),
+              _RowText(
+                  firstValue: "Codigo interno: ",
+                  secondValue: movimiento.equipoId.toString()),
               _RowText(
                   firstValue: "Acta ID: ",
                   secondValue: movimiento.idInspeccion.toString()),
