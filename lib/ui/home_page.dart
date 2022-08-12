@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ import '../const/Strings.dart';
 import '../intent_file.dart';
 import '../model/cliente.dart';
 import '../model/editCliente.dart';
-import '../plugins/flutter_typeahed/src/flutter_typeahead.dart';
+
 import '../repository/update_resources_repository.dart';
 import 'detalle_equipo_pages/dispatcher_device.dart';
 import 'detalle_equipo_pages/top_side_ui.dart';

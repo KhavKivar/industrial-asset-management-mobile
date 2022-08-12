@@ -6,7 +6,7 @@ class Strings {
   //Desktop Sv
   static const String desktopLocalSv = "http://localhost:3000";
 
-  static const String urlServer = urlServerReal;
+  static const String urlServer = desktopLocalSv;
 
   static const String urlServerGetEquipos = urlServer + "/api/equipo";
 
@@ -28,6 +28,9 @@ class Strings {
 
 extension StringExtension on String {
   String capitalize() {
+    if (this.isEmpty) {
+      return "";
+    }
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
 }

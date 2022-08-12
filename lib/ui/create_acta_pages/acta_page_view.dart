@@ -54,82 +54,91 @@ class _ActaPageViewState extends State<ActaPageView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: dark,
-          title: Text(
-            widget.edit != null ? "Editar acta" : "Creacion de acta",
-            style: TextStyle(),
+      child: WillPopScope(
+        onWillPop: () {
+          if (widget.edit != null) {
+            Provider.of<ActaState>(context, listen: false).reset();
+          }
+          Provider.of<CommonState>(context, listen: false).changeActaIndex(0);
+          return Future<bool>.value(true);
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: dark,
+            title: Text(
+              widget.edit != null ? "Editar acta" : "Creacion de acta",
+              style: TextStyle(),
+            ),
+            leading: BackButton(
+              onPressed: () {
+                if (widget.edit != null) {
+                  Provider.of<ActaState>(context, listen: false).reset();
+                }
+                Provider.of<CommonState>(context, listen: false)
+                    .changeActaIndex(0);
+                Navigator.of(context).pop();
+              },
+            ),
           ),
-          leading: BackButton(
-            onPressed: () {
-              if (widget.edit != null) {
-                Provider.of<ActaState>(context, listen: false).reset();
-              }
-              Provider.of<CommonState>(context, listen: false)
-                  .changeActaIndex(0);
-              Navigator.of(context).pop();
+          body: Shortcuts(
+            manager: LoggingShortcutManager(),
+            shortcuts: <LogicalKeySet, Intent>{
+              LogicalKeySet(LogicalKeyboardKey.arrowRight):
+                  const NextPageIntent(),
+              LogicalKeySet(LogicalKeyboardKey.arrowLeft):
+                  const PreviousPageIntent(),
+              LogicalKeySet(LogicalKeyboardKey.escape): const ClosePageIntent()
             },
-          ),
-        ),
-        body: Shortcuts(
-          manager: LoggingShortcutManager(),
-          shortcuts: <LogicalKeySet, Intent>{
-            LogicalKeySet(LogicalKeyboardKey.arrowRight):
-                const NextPageIntent(),
-            LogicalKeySet(LogicalKeyboardKey.arrowLeft):
-                const PreviousPageIntent(),
-            LogicalKeySet(LogicalKeyboardKey.escape): const ClosePageIntent()
-          },
-          child: Actions(
-            dispatcher: LoggingActionDispatcher(),
-            actions: {
-              NextPageIntent: NextPageAction(controller, callBack),
-              PreviousPageIntent: PreviousPageAction(controller, callBack),
-              ClosePageIntent: ClosePageAction(context, callBackClose)
-            },
-            child: FocusScope(
-              autofocus: true,
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                          padding: widget.device == 'mobile'
-                              ? EdgeInsets.only(left: 10, right: 10, top: 10)
-                              : EdgeInsets.only(left: 20, right: 20, top: 15),
-                          child: TopNavigator(
-                            device: widget.device,
+            child: Actions(
+              dispatcher: LoggingActionDispatcher(),
+              actions: {
+                NextPageIntent: NextPageAction(controller, callBack),
+                PreviousPageIntent: PreviousPageAction(controller, callBack),
+                ClosePageIntent: ClosePageAction(context, callBackClose)
+              },
+              child: FocusScope(
+                autofocus: true,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        Padding(
+                            padding: widget.device == 'mobile'
+                                ? EdgeInsets.only(left: 10, right: 10, top: 10)
+                                : EdgeInsets.only(left: 20, right: 20, top: 15),
+                            child: TopNavigator(
+                              device: widget.device,
+                              controller: controller,
+                            )),
+                        Expanded(
+                          child: PageView(
                             controller: controller,
-                          )),
-                      Expanded(
-                        child: PageView(
-                          controller: controller,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: [
-                            SingleChildScrollView(
-                              child: ActaGeneral(
-                                device: widget.device,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              SingleChildScrollView(
+                                child: ActaGeneral(
+                                  device: widget.device,
+                                ),
                               ),
-                            ),
-                            widget.device.toString() == 'mobile'
-                                ? actaGeneralPartTwoMobile(
-                                    editar: widget.edit,
-                                    id: widget.id,
-                                    onlyCache: widget.onlyCacheSave,
-                                    data: widget.data)
-                                : actaGeneralPartTwo(
-                                    device: widget.device.toString(),
-                                    editar: widget.edit,
-                                    id: widget.id,
-                                    onlyCache: widget.onlyCacheSave,
-                                    data: widget.data),
-                          ],
+                              widget.device.toString() == 'mobile'
+                                  ? actaGeneralPartTwoMobile(
+                                      editar: widget.edit,
+                                      id: widget.id,
+                                      onlyCache: widget.onlyCacheSave,
+                                      data: widget.data)
+                                  : actaGeneralPartTwo(
+                                      device: widget.device.toString(),
+                                      editar: widget.edit,
+                                      id: widget.id,
+                                      onlyCache: widget.onlyCacheSave,
+                                      data: widget.data),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

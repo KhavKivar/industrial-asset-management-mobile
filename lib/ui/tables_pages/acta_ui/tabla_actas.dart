@@ -1,5 +1,6 @@
 import 'package:app_licman/ui/tables_pages/acta_ui/card_acta_widget.dart';
 import 'package:app_licman/ui/tables_pages/acta_ui/utils.dart';
+import 'package:app_licman/ui/tables_pages/acta_ui/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +48,7 @@ class _ActaTableState extends State<ActaTable>
     with AutomaticKeepAliveClientMixin {
   bool showFilter = false;
   DateRangePickerController dateController = DateRangePickerController();
-  TextEditingController? searchController;
+
   final fontSizeRowTable = 20.0;
   final fontSizeRowHead = 25.0;
 
@@ -56,22 +57,17 @@ class _ActaTableState extends State<ActaTable>
 
   @override
   void initState() {
-    final now = DateTime.now();
-    dateController.selectedDate = DateTime(now.year, now.month);
-
-    searchController = TextEditingController(
-        text: Provider.of<AppState>(context, listen: false).searchActasText);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       inspecciones =
           Provider.of<AppState>(context, listen: false).inspeccionList;
-      final DateTime now = DateTime.now();
+      /*final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('yyyy-MM');
       final String formatted = formatter.format(now);
 
       List<Inspeccion> resultado = inspecciones
           .where((element) => element.ts.toString().startsWith(formatted))
           .toList();
-      Provider.of<AppState>(context, listen: false).setFilterList(resultado);
+      Provider.of<AppState>(context, listen: false).setFilterList(resultado);*/
     });
 
     super.initState();
@@ -88,249 +84,161 @@ class _ActaTableState extends State<ActaTable>
         children: [
           if (widget.device.toString() != 'mobile')
             SizedBox(
+              height: 5,
+            ),
+          SearchWidgetActa(),
+          if (widget.device == 'desktop')
+            SizedBox(
               height: 10,
             ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: dark, width: 1),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(1),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: searchController,
-                    focusNode: widget.actaFocusController,
-                    style: TextStyle(color: dark, fontSize: 20),
-                    decoration: InputDecoration(
-                      hintText: 'Buscar actas..',
-                      hintStyle: const TextStyle(fontSize: 20),
-                      prefixIcon: const Icon(Icons.search),
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                          focusNode: FocusNode(skipTraversal: true),
-                          onPressed: () {
-                            setState(() {
-                              showFilter = !showFilter;
-                            });
-                          },
-                          icon: Icon(
-                            Icons.filter_alt_outlined,
-                            color: dark,
-                            size: 25,
-                          )),
-                    ),
-                    onChanged: (value) {
-                      logicaFiltros(value);
-                    },
-                  ),
-                  if (showFilter)
-                    Column(
-                      children: [
-                        Divider(
-                          color: Colors.grey,
-                          height: 1,
-                        ),
-                        FilterPanelWidget(
-                          dateController: dateController,
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
           widget.device == 'mobile'
               ? Expanded(
                   child: ListView.builder(
-                  itemCount: Provider.of<AppState>(context)
-                      .filterInspeccionList
-                      .length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return CardActaWidget(
+                    itemCount: Provider.of<AppState>(context)
+                        .filterInspeccionList
+                        .length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CardActaWidget(
                         inspeccion: Provider.of<AppState>(context)
-                            .filterInspeccionList[index]);
-                  },
-                ))
-              : Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Focus(
-                      descendantsAreFocusable: false,
-                      child: SfDataGridTheme(
-                        data: SfDataGridThemeData(
-                          headerColor: dark,
-                          headerHoverColor: Colors.red,
-                          rowHoverColor: Colors.yellow,
-                          rowHoverTextStyle: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
+                            .filterInspeccionList[index],
+                        device: widget.device.toString(),
+                      );
+                    },
+                  ),
+                )
+              : widget.device == 'tablet'
+                  ? Expanded(
+                      child: Container(
+                        color: yellowBackground,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 15,
+                              mainAxisExtent: 230,
+                            ),
+                            shrinkWrap: true,
+                            itemCount: Provider.of<AppState>(context)
+                                .filterInspeccionList
+                                .length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CardActaWidget(
+                                inspeccion: Provider.of<AppState>(context)
+                                    .filterInspeccionList[index],
+                                device: widget.device.toString(),
+                              );
+                            },
                           ),
                         ),
-                        child: SfDataGrid(
-                          controller: widget.dataGridController,
-                          allowSwiping: true,
-                          frozenColumnsCount: 1,
-                          swipeMaxOffset: 130,
-                          source: ActaDataSource(
-                              actas: Provider.of<AppState>(context)
-                                  .filterInspeccionList),
-                          columnWidthMode: ColumnWidthMode.fill,
-                          startSwipeActionsBuilder: (BuildContext context,
-                              DataGridRow row, int rowIndex) {
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
+                      ),
+                    )
+                  : Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Focus(
+                          descendantsAreFocusable: false,
+                          child: SfDataGridTheme(
+                            data: SfDataGridThemeData(
+                              headerColor: dark,
+                              headerHoverColor: Colors.red,
+                              rowHoverColor: Colors.yellow,
+                              rowHoverTextStyle: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                            ),
+                            child: SfDataGrid(
+                              controller: widget.dataGridController,
+                              allowSwiping: true,
+                              frozenColumnsCount: 1,
+                              swipeMaxOffset: 130,
+                              onQueryRowHeight: (details) {
+                                return details
+                                    .getIntrinsicRowHeight(details.rowIndex);
+                              },
+                              source: ActaDataSource(
+                                  actas: Provider.of<AppState>(context)
+                                      .filterInspeccionList),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              startSwipeActionsBuilder: (BuildContext context,
+                                  DataGridRow row, int rowIndex) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   DispatcherActaOnlyView(
                                                       inspeccion: filterList[
-                                                          rowIndex])))
-                                      .then((value) {
-                                    if (widget.device == 'mobile' ||
-                                        widget.device == 'tablet')
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
-                                  });
-                                },
-                                child: Container(
-                                    color: Colors.deepPurple,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.remove_red_eye,
-                                        color: Colors.white,
-                                        size: 30,
-                                      ),
-                                    )));
-                          },
-                          endSwipeActionsBuilder: (BuildContext context,
-                              DataGridRow row, int rowIndex) {
-                            return GestureDetector(
-                                onTap: () {
-                                  Inspeccion acta = filterList[rowIndex];
-                                  Provider.of<ActaState>(context, listen: false)
-                                      .convertObjectTostate(acta, context);
-                                  Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DispatcherActaCreatePages(
-                                                      edit: true,
-                                                      id: acta.idInspeccion)))
-                                      .then((value) {
-                                    Provider.of<CommonState>(context,
-                                            listen: false)
-                                        .changeActaIndex(0);
-                                    if (widget.device == 'mobile' ||
-                                        widget.device == 'tablet')
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
-                                  });
-                                },
-                                child: Container(
-                                    color: Colors.deepPurple,
-                                    child: const Center(
-                                      child: Icon(Icons.edit,
-                                          color: Colors.white, size: 30),
-                                    )));
-                          },
-                          columns: getColumnsActa(true),
+                                                          rowIndex]))).then(
+                                          (value) {
+                                        if (widget.device == 'mobile' ||
+                                            widget.device == 'tablet')
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                      });
+                                    },
+                                    child: Container(
+                                        color: Colors.deepPurple,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.remove_red_eye,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                        )));
+                              },
+                              endSwipeActionsBuilder: (BuildContext context,
+                                  DataGridRow row, int rowIndex) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      Inspeccion acta = filterList[rowIndex];
+                                      Provider.of<ActaState>(context,
+                                              listen: false)
+                                          .convertObjectTostate(acta, context);
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DispatcherActaCreatePages(
+                                                          edit: true,
+                                                          id: acta
+                                                              .idInspeccion)))
+                                          .then((value) {
+                                        Provider.of<CommonState>(context,
+                                                listen: false)
+                                            .changeActaIndex(0);
+                                        if (widget.device == 'mobile' ||
+                                            widget.device == 'tablet')
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                      });
+                                    },
+                                    child: Container(
+                                        color: Colors.deepPurple,
+                                        child: const Center(
+                                          child: Icon(Icons.edit,
+                                              color: Colors.white, size: 30),
+                                        )));
+                              },
+                              columns: getColumnsActa(true),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
         ],
       ),
     );
-  }
-
-  void logicaFiltros(value) {
-    Provider.of<AppState>(context, listen: false).setSearchActa(value);
-
-    var actas = Provider.of<AppState>(context, listen: false).inspeccionList;
-    var filtros = Provider.of<CommonState>(context, listen: false).listaFiltro;
-    var fecha = null;
-    if (dateController.selectedDate != null) {
-      fecha = dateController.selectedDate.toString().split("-")[0] +
-          "-" +
-          dateController.selectedDate.toString().split("-")[1];
-    }
-
-    switch (filtros) {
-      case 0:
-        {
-          List<Inspeccion> resultado = actas
-              .where((element) =>
-                  element.idInspeccion
-                      .toString()
-                      .startsWith(value.toLowerCase()) &&
-                  (fecha == null
-                      ? true
-                      : element.ts.toString().startsWith(fecha)))
-              .toList();
-
-          Provider.of<AppState>(context, listen: false)
-              .setFilterList(resultado);
-        }
-        break;
-      case 1:
-        {
-          List<Inspeccion> resultado = actas
-              .where((element) =>
-                  element.idEquipo.toString().startsWith(value.toLowerCase()) &&
-                  (fecha == null
-                      ? true
-                      : element.ts.toString().startsWith(fecha)))
-              .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterList(resultado);
-        }
-        break;
-      case 2:
-        {
-          List<Inspeccion> resultado = actas
-              .where((element) =>
-                  (element.rut!.startsWith(value.toLowerCase()) ||
-                      RUTValidator.deFormat(element.rut!)
-                          .startsWith(value.toLowerCase())) &&
-                  (fecha == null
-                      ? true
-                      : element.ts.toString().startsWith(fecha)))
-              .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterList(resultado);
-        }
-        break;
-
-      case 3:
-        {
-          List<Inspeccion> resultado = actas
-              .where((element) =>
-                  element.ts.toString().startsWith(value.toLowerCase()) &&
-                  (fecha == null
-                      ? true
-                      : element.ts.toString().startsWith(fecha)))
-              .toList();
-          Provider.of<AppState>(context, listen: false)
-              .setFilterList(resultado);
-        }
-        break;
-    }
   }
 
   @override

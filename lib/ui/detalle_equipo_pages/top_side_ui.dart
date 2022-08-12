@@ -75,6 +75,7 @@ class _CardEquipoDetalleState extends State<CardEquipoDetalle> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    print(widget.equipo.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -135,23 +136,61 @@ class _CardEquipoDetalleState extends State<CardEquipoDetalle> {
                               )
                             else if (choose == 1)
                               if (inspecciones.isNotEmpty)
-                                Expanded(
-                                  child: Container(
-                                    color: yellowBackground,
-                                    child: ListView.builder(
-                                      itemCount: inspecciones.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5.0),
-                                          child: CardActaWidget(
-                                              inspeccion: inspecciones[index]),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                )
+                                widget.tipo.toString() == 'mobile'
+                                    ? Expanded(
+                                        child: Container(
+                                          color: yellowBackground,
+                                          child: ListView.builder(
+                                            itemCount: inspecciones.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5.0),
+                                                child: CardActaWidget(
+                                                  inspeccion:
+                                                      inspecciones[index],
+                                                  device: widget.tipo,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Expanded(
+                                        child: Container(
+                                          color: yellowBackground,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: GridView.builder(
+                                              gridDelegate:
+                                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount:
+                                                    widget.tipo.toString() ==
+                                                            'tablet'
+                                                        ? 2
+                                                        : 3,
+                                                mainAxisSpacing: 5,
+                                                crossAxisSpacing: 15,
+                                                mainAxisExtent: 230,
+                                              ),
+                                              shrinkWrap: true,
+                                              itemCount: inspecciones.length,
+                                              scrollDirection: Axis.vertical,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return CardActaWidget(
+                                                  inspeccion:
+                                                      inspecciones[index],
+                                                  device: widget.tipo,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      )
                               else
                                 const Center(
                                     child: Text(
@@ -165,25 +204,60 @@ class _CardEquipoDetalleState extends State<CardEquipoDetalle> {
                                       "No hay movimientos todavia",
                                       style: TextStyle(fontSize: 25),
                                     ))
-                                  : Expanded(
-                                      child: Container(
-                                        color: yellowBackground,
-                                        child: ListView.builder(
-                                          itemCount: movimientos.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                  : widget.tipo == 'mobile'
+                                      ? Expanded(
+                                          child: Container(
+                                            color: yellowBackground,
+                                            child: ListView.builder(
+                                              itemCount: movimientos.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 5.0),
-                                              child: CardMovimientoWidget(
-                                                  movimiento:
-                                                      movimientos[index]),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    )
+                                                  child: CardMovimientoWidget(
+                                                      movimiento:
+                                                          movimientos[index]),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                      : Expanded(
+                                          child: Container(
+                                            color: yellowBackground,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: GridView.builder(
+                                                gridDelegate:
+                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount:
+                                                      widget.tipo.toString() ==
+                                                              'tablet'
+                                                          ? 2
+                                                          : 3,
+                                                  mainAxisSpacing: 5,
+                                                  crossAxisSpacing: 15,
+                                                  mainAxisExtent: 300,
+                                                ),
+                                                shrinkWrap: true,
+                                                itemCount: movimientos.length,
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return CardMovimientoWidget(
+                                                    movimiento:
+                                                        movimientos[index],
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        )
                           ],
                         ),
                       ),

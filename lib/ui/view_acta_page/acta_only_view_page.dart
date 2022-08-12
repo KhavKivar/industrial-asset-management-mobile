@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:app_licman/const/Colors.dart';
+import 'package:app_licman/const/Strings.dart';
 import 'package:app_licman/model/inspeccion.dart';
+import 'package:app_licman/plugins/dart_rut_form.dart';
 import 'package:app_licman/ui/view_acta_page/font_size.dart';
 import 'package:app_licman/ui/view_acta_page/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -485,20 +487,25 @@ class _RowWidgetObvAndDetails extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5, top: 5),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              stringInitial,
-              style: TextStyle(fontSize: fontSizeTextRow),
-            ),
-            const SizedBox(
-              width: 50,
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              child: AutoSizeText(
+                stringInitial,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: fontSizeTextRow),
+              ),
             ),
             Expanded(
                 child: Align(
-                    alignment: Alignment.topRight,
-                    child: Text(stringFinal,
-                        style: TextStyle(fontSize: fontSizeTextRow))))
+              alignment: Alignment.topRight,
+              child: AutoSizeText(stringFinal,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 10,
+                  style: TextStyle(
+                    fontSize: fontSizeTextRow,
+                  )),
+            ))
           ],
         ),
       ),
@@ -548,7 +555,7 @@ class _FirmaAndObservacionesWidget extends StatelessWidget {
                   height: 20,
                 ),
                 _RowWidgetObvAndDetails(
-                  stringFinal: inspeccion.rut!,
+                  stringFinal: RUTValidator.formatFromText(inspeccion.rut!),
                   stringInitial: 'Rut recepcionista',
                 ),
                 _RowWidgetObvAndDetails(
@@ -560,11 +567,11 @@ class _FirmaAndObservacionesWidget extends StatelessWidget {
                   stringInitial: 'Observaciones',
                 ),
                 _RowWidgetObvAndDetails(
-                  stringFinal: inspeccion.alturaLevante!,
+                  stringFinal: inspeccion.alturaLevante! + " mm",
                   stringInitial: 'Altura de levante',
                 ),
                 _RowWidgetObvAndDetails(
-                  stringFinal: inspeccion.mastilEquipo!,
+                  stringFinal: inspeccion.mastilEquipo!.capitalize(),
                   stringInitial: 'Mastil',
                 ),
                 _RowWidgetObvAndDetails(

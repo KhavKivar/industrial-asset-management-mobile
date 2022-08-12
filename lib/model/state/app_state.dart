@@ -418,8 +418,10 @@ class AppState extends ChangeNotifier {
     filterInspeccionList = [...inspeccionList];
     imgList = await ImgRepository().get(false);
     listCola = await ColaRepository().get();
-    movimientos = await MovimientoRepository().get(false);
     clientes = await ClienteRepository().get(false);
+    movimientos = await MovimientoRepository().get(false);
+    addColumnsToMov();
+
     notifyListeners();
     contextMain = context;
     return loading;

@@ -51,42 +51,30 @@ class _MovTableState extends State<MovTable>
 
   @override
   void initState() {
-    final now = DateTime.now();
-    dateController.selectedDate = DateTime(now.year, now.month);
+    /*final now = DateTime.now();
+     dateController.selectedDate = DateTime(now.year, now.month);
 
     searchMovController = TextEditingController(
-        text: Provider.of<AppState>(context, listen: false).searchMovText);
+        text: Provider.of<AppState>(context, listen: false).searchMovText);*/
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       movimientos = Provider.of<AppState>(context, listen: false).movimientos;
       inspecciones =
           Provider.of<AppState>(context, listen: false).inspeccionList;
-      // final clientes = Provider.of<AppState>(context, listen: false).clientes;
-
-      // for (int i = 0; i < movimientos.length; i++) {
-      //   movimientos[i].equipoId = inspecciones
-      //       .firstWhere((element) =>
-      //           element.idInspeccion == movimientos[i].idInspeccion)
-      //       .idEquipo
-      //       .toString();
-      //   movimientos[i].nombreCliente = clientes
-      //       .firstWhere((element) =>
-      //           element.rut.toString() == movimientos[i].rut.toString())
-      //       .nombre
-      //       .toString();
-      // }
 
       Provider.of<AppState>(context, listen: false)
           .setMovimientoList(movimientos);
 
       //Filtros de tiempo
+
       final DateTime now = DateTime.now();
       final DateFormat formatter = DateFormat('yyyy-MM');
       final String formatted = formatter.format(now);
 
       List<Movimiento> resultado = movimientos
-          .where((element) => element.fechaMov.toString().startsWith(formatted))
+          .where((element) => element.fechaMov.toString().startsWith(''))
           .toList();
+
       (resultado.sort(((a, b) => b.fechaMov.compareTo(a.fechaMov))));
       Provider.of<AppState>(context, listen: false).setFilterMovList(resultado);
     });
@@ -168,9 +156,10 @@ class _MovTableState extends State<MovTable>
               ],
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          if (widget.device == 'desktop')
+            SizedBox(
+              height: 10,
+            ),
           widget.device == 'mobile'
               ? Expanded(
                   child: ListView.builder(
@@ -184,89 +173,119 @@ class _MovTableState extends State<MovTable>
                     },
                   ),
                 )
-              : Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Focus(
-                      descendantsAreFocusable: false,
-                      child: SfDataGridTheme(
-                        data: SfDataGridThemeData(
-                          headerColor: dark,
-                          rowHoverColor: Colors.yellow,
-                          headerHoverColor: Colors.red,
-                          rowHoverTextStyle: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
+              : widget.device == 'tablet'
+                  ? Expanded(
+                      child: Container(
+                        color: yellowBackground,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 5,
+                              crossAxisSpacing: 15,
+                              mainAxisExtent: 300,
+                            ),
+                            shrinkWrap: true,
+                            itemCount: Provider.of<AppState>(context)
+                                .filterMovimientoList
+                                .length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CardMovimientoWidget(
+                                movimiento: Provider.of<AppState>(context)
+                                    .filterMovimientoList[index],
+                              );
+                            },
                           ),
                         ),
-                        child: SfDataGrid(
-                          controller: widget.dataGridController,
-                          allowSwiping: true,
-                          swipeMaxOffset: 130,
-                          frozenColumnsCount: 1,
-                          onQueryRowHeight: (details) {
-                            // Set the row height as 70.0 to the column header row.
+                      ),
+                    )
+                  : Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Focus(
+                          descendantsAreFocusable: false,
+                          child: SfDataGridTheme(
+                            data: SfDataGridThemeData(
+                              headerColor: dark,
+                              rowHoverColor: Colors.yellow,
+                              headerHoverColor: Colors.red,
+                              rowHoverTextStyle: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                            ),
+                            child: SfDataGrid(
+                              controller: widget.dataGridController,
+                              allowSwiping: true,
+                              swipeMaxOffset: 130,
+                              frozenColumnsCount: 1,
+                              onQueryRowHeight: (details) {
+                                // Set the row height as 70.0 to the column header row.
 
-                            return details
-                                .getIntrinsicRowHeight(details.rowIndex);
-                          },
-                          startSwipeActionsBuilder: (BuildContext context,
-                              DataGridRow row, int rowIndex) {
-                            return GestureDetector(
-                                onTap: () {
-                                  final int indexActa = Provider.of<AppState>(
-                                          context,
-                                          listen: false)
-                                      .inspeccionList
-                                      .lastIndexWhere((element) =>
-                                          element.idInspeccion ==
+                                return details
+                                    .getIntrinsicRowHeight(details.rowIndex);
+                              },
+                              startSwipeActionsBuilder: (BuildContext context,
+                                  DataGridRow row, int rowIndex) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      final int indexActa =
                                           Provider.of<AppState>(context,
                                                   listen: false)
-                                              .filterMovimientoList[rowIndex]
-                                              .idInspeccion);
+                                              .inspeccionList
+                                              .lastIndexWhere((element) =>
+                                                  element.idInspeccion ==
+                                                  Provider.of<AppState>(context,
+                                                          listen: false)
+                                                      .filterMovimientoList[
+                                                          rowIndex]
+                                                      .idInspeccion);
 
-                                  if (indexActa != -1) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DispatcherActaOnlyView(
-                                                    inspeccion: inspecciones[
-                                                        indexActa]))).then(
-                                        (value) {
-                                      if (widget.device == 'mobile' ||
-                                          widget.device == 'tablet')
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                    color: Colors.deepPurple,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.remove_red_eye,
-                                        color: Colors.white,
-                                        size: 30,
-                                      ),
-                                    )));
-                          },
-                          source: MovimientoDataSource(
-                              movimientos: Provider.of<AppState>(context)
-                                  .filterMovimientoList),
-                          columnWidthMode: ColumnWidthMode.fill,
-                          columns: columnsMov(true),
+                                      if (indexActa != -1) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DispatcherActaOnlyView(
+                                                        inspeccion: inspecciones[
+                                                            indexActa]))).then(
+                                            (value) {
+                                          if (widget.device == 'mobile' ||
+                                              widget.device == 'tablet')
+                                            FocusScope.of(context)
+                                                .requestFocus(FocusNode());
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                        color: Colors.deepPurple,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.remove_red_eye,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                        )));
+                              },
+                              source: MovimientoDataSource(
+                                  movimientos: Provider.of<AppState>(context)
+                                      .filterMovimientoList),
+                              columnWidthMode: ColumnWidthMode.fill,
+                              columns: columnsMov(true),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
         ],
       ),
     );

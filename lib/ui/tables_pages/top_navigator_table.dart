@@ -1,22 +1,20 @@
 import 'package:app_licman/const/Colors.dart';
 import 'package:app_licman/model/state/common_var_state.dart';
-import 'package:app_licman/plugins/dart_rut_form.dart';
 import 'package:app_licman/ui/tables_pages/acta_ui/tabla_actas.dart';
+import 'package:app_licman/ui/tables_pages/acta_ui/widget.dart';
 import 'package:app_licman/ui/tables_pages/movimiento_ui/tabla_movimientos.dart';
-
 import 'package:app_licman/widget/bottomNavigator.dart';
 import 'package:app_licman/widget/drawer.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter/src/foundation/diagnostics.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../intent_file.dart';
 import '../../widget/row_navigator_widget.dart';
-import '../create_acta_pages/acta_page_view.dart';
 import '../create_acta_pages/dispatcher_acta_pages.dart';
 
 class TableOfActas extends StatefulWidget {
@@ -44,6 +42,7 @@ class _TableOfActasState extends State<TableOfActas> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       int selectON = Provider.of<CommonState>(context, listen: false).tabSelect;
       if (selectON == 1) {
@@ -90,102 +89,62 @@ class _TableOfActasState extends State<TableOfActas> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     var provSelectState = Provider.of<CommonState>(context).categories;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Actas y movimientos"),
-        backgroundColor: dark,
-      ),
-      drawer: MyDrawer(
-        device: widget.device,
-      ),
-      bottomNavigationBar: const BottomNavigator(),
-      floatingActionButton: widget.device == 'mobile'
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AnimatedSwitcher(
-                  duration: Duration(milliseconds: 1000),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      child: child,
-                      opacity:
-                          animation.drive(CurveTween(curve: Curves.elasticOut)),
-                    );
-                  },
-                  child: Provider.of<CommonState>(context).tabSelect == 0
-                      ? FloatingActionButton(
-                          backgroundColor: dark,
-                          heroTag: "mov",
-                          onPressed: () {
-                            Provider.of<CommonState>(context, listen: false)
-                                .setTabSelect(1);
-                            controller.animateToPage(1,
-                                duration: Duration(milliseconds: 400),
-                                curve: Curves.easeInOut);
-                          },
-                          child: Icon(
-                            Icons.swap_vert,
-                            color: yellowBackground,
-                          ),
-                        )
-                      : FloatingActionButton(
-                          backgroundColor: dark,
-                          heroTag: "actas",
-                          onPressed: () {
-                            Provider.of<CommonState>(context, listen: false)
-                                .setTabSelect(0);
-                            controller.animateToPage(0,
-                                duration: Duration(milliseconds: 400),
-                                curve: Curves.easeInOut);
-                          },
-                          child: Icon(
-                            Icons.content_paste,
-                            color: yellowBackground,
-                          ),
-                        ),
+    return WillPopScope(
+      onWillPop: () {
+        Provider.of<CommonState>(context, listen: false).changeIndex(0);
+        return Future<bool>.value(true);
+      },
+      child: Scaffold(
+        drawer: MyDrawer(
+          device: widget.device,
+        ),
+        appBar: AppBar(
+          backgroundColor: dark,
+          title: Text("Actas y movimientos"),
+        ),
+        bottomNavigationBar: const BottomNavigator(),
+        floatingActionButton: widget.device == 'mobile'
+            ? Container()
+            : FloatingActionButton(
+                backgroundColor: Colors.blueAccent,
+                heroTag: "add",
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
                 ),
-              ],
-            )
-          : FloatingActionButton(
-              backgroundColor: Colors.blueAccent,
-              heroTag: "add",
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DispatcherActaCreatePages()),
-                ).then((value) {
-                  Provider.of<CommonState>(context, listen: false)
-                      .changeActaIndex(0);
-                });
-              }),
-      floatingActionButtonLocation: widget.device == 'mobile'
-          ? FloatingActionButtonLocation.startFloat
-          : widget.device == 'tablet'
-              ? FloatingActionButtonLocation.endDocked
-              : FloatingActionButtonLocation.endFloat,
-      body: Shortcuts(
-        manager: LoggingShortcutManager(),
-        shortcuts: <LogicalKeySet, Intent>{
-          LogicalKeySet(LogicalKeyboardKey.arrowRight): const NextPageIntent(),
-          LogicalKeySet(LogicalKeyboardKey.arrowLeft):
-              const PreviousPageIntent(),
-          LogicalKeySet(LogicalKeyboardKey.escape): const ClosePageIntent()
-        },
-        child: Actions(
-          dispatcher: LoggingActionDispatcher(),
-          actions: {
-            NextPageIntent: NextPageAction(controller, changeSelectItem),
-            PreviousPageIntent:
-                PreviousPageAction(controller, changeSelectItem),
-            ClosePageIntent: ClosePageAction(context, changeItemSelectOnBar)
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const DispatcherActaCreatePages()),
+                  ).then((value) {
+                    Provider.of<CommonState>(context, listen: false)
+                        .changeActaIndex(0);
+                  });
+                }),
+        floatingActionButtonLocation: widget.device == 'mobile'
+            ? FloatingActionButtonLocation.startFloat
+            : widget.device == 'tablet'
+                ? FloatingActionButtonLocation.endDocked
+                : FloatingActionButtonLocation.endFloat,
+        body: Shortcuts(
+          manager: LoggingShortcutManager(),
+          shortcuts: <LogicalKeySet, Intent>{
+            LogicalKeySet(LogicalKeyboardKey.arrowRight):
+                const NextPageIntent(),
+            LogicalKeySet(LogicalKeyboardKey.arrowLeft):
+                const PreviousPageIntent(),
+            LogicalKeySet(LogicalKeyboardKey.escape): const ClosePageIntent()
           },
-          child: SafeArea(
+          child: Actions(
+            dispatcher: LoggingActionDispatcher(),
+            actions: {
+              NextPageIntent: NextPageAction(controller, changeSelectItem),
+              PreviousPageIntent:
+                  PreviousPageAction(controller, changeSelectItem),
+              ClosePageIntent: ClosePageAction(context, changeItemSelectOnBar)
+            },
             child: Builder(builder: (BuildContext context) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -201,7 +160,9 @@ class _TableOfActasState extends State<TableOfActas> {
                   Expanded(
                     child: PageView(
                       controller: controller,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics: widget.device.toString() == 'mobile'
+                          ? AlwaysScrollableScrollPhysics()
+                          : NeverScrollableScrollPhysics(),
                       children: [
                         Shortcuts(
                           manager: LoggingShortcutManager(),
@@ -338,4 +299,39 @@ class _NavigatorTwoItemState extends State<_NavigatorTwoItem> {
       ),
     );
   }
+}
+
+class OurDelegate extends SliverPersistentHeaderDelegate {
+  double toolBarHeight;
+  //toolBarHeight Included in both
+  double closedHeight;
+  double openHeight;
+
+  OurDelegate({
+    required this.toolBarHeight,
+    required this.closedHeight,
+    required this.openHeight,
+  });
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: 10,
+      ),
+      child: SearchWidgetActa(),
+    );
+  }
+
+  @override
+  double get maxExtent => toolBarHeight + openHeight;
+
+  @override
+  double get minExtent => toolBarHeight + closedHeight;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }

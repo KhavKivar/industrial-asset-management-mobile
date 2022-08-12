@@ -274,8 +274,7 @@ class ActaDataSource extends DataGridSource {
                   columnName: 'rut',
                   value: RUTValidator.formatFromText(e.rut.toString())),
               DataGridCell<String>(
-                  columnName: 'altura',
-                  value: e.alturaLevante.toString().replaceAll(".", ",")),
+                  columnName: 'observacion', value: e.observacion.toString()),
               DataGridCell<String>(
                   columnName: 'fecha', value: formatter.format(e.ts!)),
             ]))
@@ -294,7 +293,6 @@ class ActaDataSource extends DataGridSource {
         cells: row.getCells().map<Widget>((e) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
           style: TextStyle(fontSize: 20),
@@ -344,14 +342,16 @@ List<GridColumn> getColumnsActa(bool borderTop) {
                 style: TextStyle(
                     color: Colors.white, fontSize: fontSizeRowHead)))),
     GridColumn(
-        columnName: 'altura',
-        minimumWidth: 80,
+        columnName: 'observacion',
+        minimumWidth: 150,
         label: Container(
-            padding: EdgeInsets.all(8.0),
-            alignment: Alignment.center,
-            child: AutoSizeText('Altura [mm]',
-                style: TextStyle(
-                    color: Colors.white, fontSize: fontSizeRowHead)))),
+          padding: const EdgeInsets.all(8.0),
+          alignment: Alignment.center,
+          child: Text('Observaciones',
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+              style: TextStyle(color: Colors.white, fontSize: fontSizeRowHead)),
+        )),
     GridColumn(
         columnName: 'fecha',
         minimumWidth: 150,

@@ -29,7 +29,9 @@ class CardMovimientoWidget extends StatelessWidget {
                     builder: (context) => DispatcherActaOnlyView(
                         inspeccion:
                             Provider.of<AppState>(context, listen: false)
-                                .inspeccionList[indexActa])));
+                                .inspeccionList[indexActa]))).then((value) {
+              FocusScope.of(context).requestFocus(FocusNode());
+            });
           }
           ;
         },
@@ -37,36 +39,41 @@ class CardMovimientoWidget extends StatelessWidget {
           decoration: BoxDecoration(
               border: Border.all(width: 1.0, color: Colors.black),
               color: Colors.white,
-              borderRadius: BorderRadius.circular(15)),
+              borderRadius: BorderRadius.circular(5)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               _RowText(
-                  firstValue: "Fecha Movimiento: ",
+                  firstValue: "Fecha",
                   secondValue: formatter.format(movimiento.fechaMov)),
               _RowText(
-                  firstValue: "Transporte: ",
+                  firstValue: "Transporte ",
                   secondValue: movimiento.transporte),
               _RowText(
-                  firstValue: "Empresa: ",
+                  firstValue: "Empresa ",
                   secondValue: movimiento.nombreCliente),
-              _RowText(firstValue: "Tipo: ", secondValue: movimiento.tipo),
+              _RowText(firstValue: "Tipo ", secondValue: movimiento.tipo),
               _RowText(
-                  firstValue: "Codigo interno: ",
+                  firstValue: "Codigo interno",
                   secondValue: movimiento.equipoId.toString()),
               _RowText(
-                  firstValue: "Acta ID: ",
+                  firstValue: "Acta ID ",
                   secondValue: movimiento.idInspeccion.toString()),
               _RowText(
-                  firstValue: "Cambio: ",
+                  firstValue: "Cambio ",
                   secondValue: movimiento.cambio == null
                       ? "-"
                       : movimiento.cambio.toString()),
               _RowText(
-                  firstValue: "Observacion: ",
+                  firstValue: "N° guia de despacho",
+                  secondValue: movimiento.idGuiaDespacho == null
+                      ? "-"
+                      : movimiento.idGuiaDespacho.toString()),
+              _RowText(
+                  firstValue: "Observacion ",
                   secondValue: movimiento.observaciones.toString()),
               _RowText(
-                firstValue: "Fecha retiro: ",
+                firstValue: "Fecha retiro ",
                 secondValue: (movimiento.fechaRetiro == null
                     ? "-"
                     : formatter.format(movimiento.fechaRetiro!)),
@@ -96,11 +103,16 @@ class _RowText extends StatelessWidget {
           firstValue,
           style: TextStyle(fontSize: fontSize),
         ),
+        const SizedBox(
+          width: 15,
+        ),
         Expanded(
           child: Align(
             alignment: Alignment.topRight,
-            child: Text(
+            child: AutoSizeText(
               secondValue,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: fontSize),
             ),
           ),

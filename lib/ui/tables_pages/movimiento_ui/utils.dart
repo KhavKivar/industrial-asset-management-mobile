@@ -1,3 +1,4 @@
+import 'package:app_licman/const/Strings.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +28,8 @@ class MovimientoDataSource extends DataGridSource {
                   columnName: 'transporte', value: e.transporte.toString()),
               DataGridCell<String>(
                   columnName: 'Empresa', value: e.nombreCliente),
-              DataGridCell<String>(columnName: 'tipo', value: e.tipo),
+              DataGridCell<String>(
+                  columnName: 'tipo', value: e.tipo.capitalize()),
               DataGridCell<int>(columnName: 'Acta ID', value: e.idInspeccion),
               DataGridCell<int>(
                   columnName: 'N° Guia despacho', value: e.idGuiaDespacho),
@@ -345,6 +347,7 @@ List<GridColumn> columnsMov(bool borderTop) {
     GridColumn(
         columnName: 'fecha_mov',
         columnWidthMode: ColumnWidthMode.fitByColumnName,
+        minimumWidth: 150,
         label: Container(
             decoration: BoxDecoration(
               color: Colors.red,
