@@ -1,5 +1,5 @@
-import 'package:app_licman/const/Strings.dart';
-import 'package:app_licman/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/const/Strings.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

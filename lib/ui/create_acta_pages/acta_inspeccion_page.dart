@@ -1,5 +1,5 @@
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/state/acta_state.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/state/acta_state.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 

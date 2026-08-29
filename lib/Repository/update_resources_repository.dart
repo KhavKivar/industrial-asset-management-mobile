@@ -1,9 +1,9 @@
-import 'package:app_licman/model/cliente.dart';
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/cliente.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
 
-import 'package:app_licman/model/updateTime.dart';
-import 'package:app_licman/repository/movimientos_repository.dart';
+import 'package:industrial_asset_management_mobile/model/updateTime.dart';
+import 'package:industrial_asset_management_mobile/repository/movimientos_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 

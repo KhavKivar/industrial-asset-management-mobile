@@ -1,6 +1,6 @@
-import 'package:app_licman/model/movimiento.dart';
-import 'package:app_licman/repository/utils.dart';
-import 'package:app_licman/services/movimiento_services.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/repository/utils.dart';
+import 'package:industrial_asset_management_mobile/services/movimiento_services.dart';
 
 import '../model/updateTime.dart';
 import '../services/hive_services.dart';

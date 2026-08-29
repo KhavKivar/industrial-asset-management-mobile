@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:app_licman/model/state/app_state.dart';
-import 'package:app_licman/services/hive_services.dart';
-import 'package:app_licman/ui/responsive_layout.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/services/hive_services.dart';
+import 'package:industrial_asset_management_mobile/ui/responsive_layout.dart';
 
-import 'package:app_licman/ui/view_acta_page/acta_only_view_page.dart';
+import 'package:industrial_asset_management_mobile/ui/view_acta_page/acta_only_view_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

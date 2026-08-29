@@ -1,6 +1,6 @@
-import 'package:app_licman/model/movimiento.dart';
-import 'package:app_licman/model/state/app_state.dart';
-import 'package:app_licman/ui/view_acta_page/dispatcher_acta_only_view.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/ui/view_acta_page/dispatcher_acta_only_view.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

@@ -1,5 +1,5 @@
-import 'package:app_licman/repository/utils.dart';
-import 'package:app_licman/services/inventario/equiposServices.dart';
+import 'package:industrial_asset_management_mobile/repository/utils.dart';
+import 'package:industrial_asset_management_mobile/services/inventario/equiposServices.dart';
 
 import '../model/modeloimagen.dart';
 import '../model/updateTime.dart';

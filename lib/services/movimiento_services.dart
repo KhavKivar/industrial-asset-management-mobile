@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app_licman/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
 import 'package:http/http.dart' as http;
 
 import '../const/Strings.dart';

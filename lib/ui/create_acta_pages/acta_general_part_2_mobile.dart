@@ -2,13 +2,13 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/state/acta_state.dart';
-import 'package:app_licman/ui/create_acta_pages/signature_page.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/state/acta_state.dart';
+import 'package:industrial_asset_management_mobile/ui/create_acta_pages/signature_page.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:app_licman/plugins/dart_rut_form.dart';
-import 'package:app_licman/widget/bottomNavigator.dart';
+import 'package:industrial_asset_management_mobile/plugins/dart_rut_form.dart';
+import 'package:industrial_asset_management_mobile/widget/bottomNavigator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

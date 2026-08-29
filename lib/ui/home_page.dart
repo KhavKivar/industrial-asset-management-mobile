@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/modeloimagen.dart';
-import 'package:app_licman/model/movimiento.dart';
-import 'package:app_licman/model/state/acta_state.dart';
-import 'package:app_licman/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/modeloimagen.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/state/acta_state.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
 
-import 'package:app_licman/widget/bottomNavigator.dart';
-import 'package:app_licman/widget/card_equipo_widget.dart';
-import 'package:app_licman/widget/drawer.dart';
+import 'package:industrial_asset_management_mobile/widget/bottomNavigator.dart';
+import 'package:industrial_asset_management_mobile/widget/card_equipo_widget.dart';
+import 'package:industrial_asset_management_mobile/widget/drawer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

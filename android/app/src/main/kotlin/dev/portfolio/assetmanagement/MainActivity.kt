@@ -1,4 +1,4 @@
-package com.example.app_licman
+package dev.portfolio.assetmanagement
 
 import io.flutter.embedding.android.FlutterActivity
 

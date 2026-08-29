@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../equipo.dart';
-import 'package:app_licman/plugins/dart_rut_form.dart';
+import 'package:industrial_asset_management_mobile/plugins/dart_rut_form.dart';
 
 extension StringCasingExtension on String {
   String toCapitalized() =>

@@ -1,12 +1,8 @@
 class Strings {
-  //Server
-  static const String urlServerReal = "https://licman-backend.xyz";
-  //Dev Serverx
-  static const String localServer = "http://10.0.2.2:3000";
-  //Desktop Sv
-  static const String desktopLocalSv = "http://localhost:3000";
-
-  static const String urlServer = desktopLocalSv;
+  static const String urlServer = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://10.0.2.2:3000',
+  );
 
   static const String urlServerGetEquipos = urlServer + "/api/equipo";
 

@@ -1,7 +1,7 @@
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/ui/detalle_equipo_pages/top_side_ui.dart';
-import 'package:app_licman/ui/responsive_layout.dart';
-import 'package:app_licman/ui/tables_pages/top_navigator_table.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/ui/detalle_equipo_pages/top_side_ui.dart';
+import 'package:industrial_asset_management_mobile/ui/responsive_layout.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/top_navigator_table.dart';
 import 'package:flutter/cupertino.dart';
 
 class TableDispatcher extends StatelessWidget {

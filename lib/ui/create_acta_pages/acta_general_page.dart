@@ -1,8 +1,8 @@
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/model/state/acta_state.dart';
-import 'package:app_licman/model/state/app_state.dart';
-import 'package:app_licman/widget/details_equipo_widget.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/model/state/acta_state.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/widget/details_equipo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

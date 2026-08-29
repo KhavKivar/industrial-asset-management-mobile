@@ -1,9 +1,9 @@
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/state/app_state.dart';
-import 'package:app_licman/model/state/common_var_state.dart';
-import 'package:app_licman/plugins/dart_rut_form.dart';
-import 'package:app_licman/ui/tables_pages/acta_ui/utils.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/model/state/common_var_state.dart';
+import 'package:industrial_asset_management_mobile/plugins/dart_rut_form.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/acta_ui/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';

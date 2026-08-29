@@ -1,5 +1,5 @@
-name: app_licman
-description: A new Flutter project.
+name: industrial_asset_management_mobile
+description: Mobile field operations for industrial asset inspections and lifecycle management.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

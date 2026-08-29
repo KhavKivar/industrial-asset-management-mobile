@@ -1,4 +1,4 @@
-import 'package:app_licman/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

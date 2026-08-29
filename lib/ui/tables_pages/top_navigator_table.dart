@@ -1,10 +1,10 @@
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/state/common_var_state.dart';
-import 'package:app_licman/ui/tables_pages/acta_ui/tabla_actas.dart';
-import 'package:app_licman/ui/tables_pages/acta_ui/widget.dart';
-import 'package:app_licman/ui/tables_pages/movimiento_ui/tabla_movimientos.dart';
-import 'package:app_licman/widget/bottomNavigator.dart';
-import 'package:app_licman/widget/drawer.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/state/common_var_state.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/acta_ui/tabla_actas.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/acta_ui/widget.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/movimiento_ui/tabla_movimientos.dart';
+import 'package:industrial_asset_management_mobile/widget/bottomNavigator.dart';
+import 'package:industrial_asset_management_mobile/widget/drawer.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

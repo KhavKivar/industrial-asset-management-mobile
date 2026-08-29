@@ -1,6 +1,6 @@
-import 'package:app_licman/model/editCliente.dart';
-import 'package:app_licman/model/movimiento.dart';
-import 'package:app_licman/services/inventario/equiposServices.dart';
+import 'package:industrial_asset_management_mobile/model/editCliente.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/services/inventario/equiposServices.dart';
 import 'package:flutter/material.dart';
 
 import '../../repository/Img_repository.dart';

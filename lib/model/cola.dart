@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:app_licman/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
 import 'package:hive/hive.dart';
 part 'cola.g.dart';
 

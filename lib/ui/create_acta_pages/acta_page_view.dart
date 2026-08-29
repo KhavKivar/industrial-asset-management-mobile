@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/state/common_var_state.dart';
-import 'package:app_licman/ui/create_acta_pages/acta_general_part_2_mobile.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/state/common_var_state.dart';
+import 'package:industrial_asset_management_mobile/ui/create_acta_pages/acta_general_part_2_mobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:app_licman/model/editCliente.dart';
-import 'package:app_licman/repository/utils.dart';
+import 'package:industrial_asset_management_mobile/model/editCliente.dart';
+import 'package:industrial_asset_management_mobile/repository/utils.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 

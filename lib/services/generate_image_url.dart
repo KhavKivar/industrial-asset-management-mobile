@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app_licman/const/Strings.dart';
+import 'package:industrial_asset_management_mobile/const/Strings.dart';
 import 'package:http/http.dart' as http;
 
 

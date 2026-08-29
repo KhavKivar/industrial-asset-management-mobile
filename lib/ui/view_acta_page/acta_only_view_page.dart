@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/const/Strings.dart';
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/plugins/dart_rut_form.dart';
-import 'package:app_licman/ui/view_acta_page/font_size.dart';
-import 'package:app_licman/ui/view_acta_page/utils.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/const/Strings.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/plugins/dart_rut_form.dart';
+import 'package:industrial_asset_management_mobile/ui/view_acta_page/font_size.dart';
+import 'package:industrial_asset_management_mobile/ui/view_acta_page/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 

@@ -1,4 +1,4 @@
-import 'package:app_licman/ui/tables_pages/movimiento_ui/utils.dart';
+import 'package:industrial_asset_management_mobile/ui/tables_pages/movimiento_ui/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

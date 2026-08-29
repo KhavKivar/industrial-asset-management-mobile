@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:app_licman/model/cliente.dart';
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/model/movimiento.dart';
-import 'package:app_licman/model/state/app_state.dart';
-import 'package:app_licman/services/login_services.dart';
-import 'package:app_licman/ui/home_page.dart';
-import 'package:app_licman/ui/login.dart';
+import 'package:industrial_asset_management_mobile/model/cliente.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/model/movimiento.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/services/login_services.dart';
+import 'package:industrial_asset_management_mobile/ui/home_page.dart';
+import 'package:industrial_asset_management_mobile/ui/login.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
             ],
             locale: const Locale('es'),
             scrollBehavior: MyCustomScrollBehavior(),
-            title: 'Licman App',
+            title: 'Industrial Asset Management',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
                 fontFamily: 'Poppins',

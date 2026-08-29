@@ -1,9 +1,9 @@
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/model/state/acta_state.dart';
-import 'package:app_licman/model/state/common_var_state.dart';
-import 'package:app_licman/plugins/dart_rut_form.dart';
-import 'package:app_licman/ui/create_acta_pages/dispatcher_acta_pages.dart';
-import 'package:app_licman/ui/view_acta_page/dispatcher_acta_only_view.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/state/acta_state.dart';
+import 'package:industrial_asset_management_mobile/model/state/common_var_state.dart';
+import 'package:industrial_asset_management_mobile/plugins/dart_rut_form.dart';
+import 'package:industrial_asset_management_mobile/ui/create_acta_pages/dispatcher_acta_pages.dart';
+import 'package:industrial_asset_management_mobile/ui/view_acta_page/dispatcher_acta_only_view.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

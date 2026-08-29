@@ -2,7 +2,7 @@
 //
 //     final inspeccion = inspeccionFromJson(jsonString);
 
-import 'package:app_licman/model/data_class.dart';
+import 'package:industrial_asset_management_mobile/model/data_class.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';

@@ -1,4 +1,4 @@
-import 'package:app_licman/const/breakpoints.dart';
+import 'package:industrial_asset_management_mobile/const/breakpoints.dart';
 import 'package:flutter/cupertino.dart';
 
 String getDevice(context) {

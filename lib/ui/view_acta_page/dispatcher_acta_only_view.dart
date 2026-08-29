@@ -1,4 +1,4 @@
-import 'package:app_licman/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../model/inspeccion.dart';

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(app_licman LANGUAGES CXX)
+project(industrial_asset_management_mobile LANGUAGES CXX)
 
-set(BINARY_NAME "app_licman")
+set(BINARY_NAME "industrial_asset_management_mobile")
 
 cmake_policy(SET CMP0063 NEW)
 

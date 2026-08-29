@@ -1,4 +1,4 @@
-import 'package:app_licman/model/editCliente.dart';
+import 'package:industrial_asset_management_mobile/model/editCliente.dart';
 import 'package:hive/hive.dart';
 
 import '../model/cliente.dart';

@@ -1,7 +1,7 @@
-import 'package:app_licman/const/Colors.dart';
-import 'package:app_licman/model/equipo.dart';
-import 'package:app_licman/model/modeloimagen.dart';
-import 'package:app_licman/model/state/app_state.dart';
+import 'package:industrial_asset_management_mobile/const/Colors.dart';
+import 'package:industrial_asset_management_mobile/model/equipo.dart';
+import 'package:industrial_asset_management_mobile/model/modeloimagen.dart';
+import 'package:industrial_asset_management_mobile/model/state/app_state.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';

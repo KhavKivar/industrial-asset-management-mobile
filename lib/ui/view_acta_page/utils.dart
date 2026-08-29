@@ -1,4 +1,4 @@
-import 'package:app_licman/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
 
 List<bool> convertStrinToBool(String? param) {
   if (param == null) {

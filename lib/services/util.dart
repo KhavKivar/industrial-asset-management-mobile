@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:app_licman/model/updateTime.dart';
+import 'package:industrial_asset_management_mobile/model/updateTime.dart';
 
 import '../const/Strings.dart';
 import 'package:http/http.dart' as http;

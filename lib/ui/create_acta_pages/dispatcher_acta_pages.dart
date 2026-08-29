@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:app_licman/model/inspeccion.dart';
-import 'package:app_licman/ui/create_acta_pages/acta_page_view.dart';
+import 'package:industrial_asset_management_mobile/model/inspeccion.dart';
+import 'package:industrial_asset_management_mobile/ui/create_acta_pages/acta_page_view.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../model/inspeccion.dart';
